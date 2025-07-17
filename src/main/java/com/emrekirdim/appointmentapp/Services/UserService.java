@@ -25,6 +25,7 @@ public class UserService {
         existing.setName(user.getName());
         existing.setEmail(user.getEmail());
         existing.setPhone(user.getPhone());
+        existing.setIdNum(user.getIdNum());
         return userRepository.save(existing);
     }
 
