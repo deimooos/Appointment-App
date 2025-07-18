@@ -52,7 +52,7 @@ public class AppointmentService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
 
         Optional<Appointment> existing = appointmentRepository.findByDoctorAndDateTimeAndStatus(
-                doctor, dateTime, AppointmentStatus.ACTIVE);
+                doctor, dateTime, AppointmentStatus.SCHEDULED);
 
         if (existing.isPresent()) {
             throw new IllegalArgumentException("This time slot is already taken for the selected doctor.");
@@ -62,7 +62,7 @@ public class AppointmentService {
         appointment.setUser(user);
         appointment.setDoctor(doctor);
         appointment.setDateTime(dateTime);
-        appointment.setStatus(AppointmentStatus.ACTIVE);
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
 
         return appointmentRepository.save(appointment);
     }
