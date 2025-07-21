@@ -5,6 +5,7 @@ import com.emrekirdim.appointmentapp.Models.Doctor;
 import com.emrekirdim.appointmentapp.Models.User;
 import com.emrekirdim.appointmentapp.Models.AppointmentStatus;
 import com.emrekirdim.appointmentapp.Models.AppointmentResult;
+import com.emrekirdim.appointmentapp.Models.Specialty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,4 +22,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByDoctorIdAndResult(Long doctorId, AppointmentResult result);
     List<Appointment> findByUserIdAndResult(Long userId, AppointmentResult result);
     List<Appointment> findByDateTimeBetweenAndResult(LocalDateTime start, LocalDateTime end, AppointmentResult result);
+    List<Appointment> findByDoctorSpecialtyId(Long specialtyId);
+    List<Appointment> findByDoctorSpecialtyIdAndDateTimeBetween(Long specialtyId, LocalDateTime start, LocalDateTime end);
+    List<Appointment> findByDoctorSpecialtyIdAndStatus(Long specialtyId, AppointmentStatus status);
+    List<Appointment> findByDoctorSpecialtyIdAndDateTimeBetweenAndStatus(Long specialtyId, LocalDateTime start, LocalDateTime end, AppointmentStatus status);
+    List<Appointment> findByDoctorSpecialtyIdAndResult(Long specialtyId, AppointmentResult result);
+    List<Appointment> findByDoctorSpecialtyIdAndDateTimeBetweenAndResult(Long specialtyId, LocalDateTime start, LocalDateTime end, AppointmentResult result);
+
+
 }

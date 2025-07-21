@@ -1,7 +1,9 @@
 package com.emrekirdim.appointmentapp.Controllers;
 
-import com.emrekirdim.appointmentapp.Models.Doctor;
+import com.emrekirdim.appointmentapp.DTO.DoctorDto;
+import com.emrekirdim.appointmentapp.DTO.FilterRequestDto;
 import com.emrekirdim.appointmentapp.Services.DoctorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,29 +11,33 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/doctors")
 public class DoctorController {
-    private final DoctorService doctorService;
 
-    public DoctorController(DoctorService doctorService) {
-        this.doctorService = doctorService;
-    }
+    @Autowired
+    private DoctorService doctorService;
 
     @PostMapping("/create")
-    public Doctor createDoctor(@RequestBody Doctor doctor) {
-        return doctorService.createDoctor(doctor);
+    public DoctorDto createDoctor(@RequestBody DoctorDto doctorDto) {
+        return doctorService.createDoctor(doctorDto);
     }
 
     @PutMapping("/update")
-    public Doctor updateDoctor(@RequestBody Doctor doctor) {
-        return doctorService.updateDoctor(doctor);
+    public DoctorDto updateDoctor(@RequestBody DoctorDto doctorDto) {
+        return doctorService.updateDoctor(doctorDto);
     }
 
     @DeleteMapping("/delete")
-    public void deleteDoctor(@RequestBody Doctor doctor) {
-        doctorService.deleteDoctor(doctor.getId());
+    public void deleteDoctor(@RequestBody DoctorDto doctorDto) {
+        doctorService.deleteDoctor(doctorDto);
     }
 
     @GetMapping("/all")
-    public List<Doctor> getAllDoctors() {
+    public List<DoctorDto> getAllDoctors() {
         return doctorService.getAllDoctors();
     }
+
+    @PostMapping("/by-specialty")
+    public List<DoctorDto> getDoctorsBySpecialty(@RequestBody FilterRequestDto filterRequestDto) {
+        return doctorService.getDoctorsBySpecialty(filterRequestDto.getSpecialtyId());
+    }
+
 }

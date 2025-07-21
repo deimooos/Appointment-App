@@ -1,11 +1,9 @@
 package com.emrekirdim.appointmentapp.Controllers;
 
-import com.emrekirdim.appointmentapp.Models.Appointment;
-import com.emrekirdim.appointmentapp.Models.DateRange;
-import com.emrekirdim.appointmentapp.Models.AppointmentStatus;
-import com.emrekirdim.appointmentapp.Models.AppointmentResult;
-import com.emrekirdim.appointmentapp.Models.FilterRequest;
+import com.emrekirdim.appointmentapp.DTO.AppointmentDto;
+import com.emrekirdim.appointmentapp.DTO.FilterRequestDto;
 import com.emrekirdim.appointmentapp.Services.AppointmentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,83 +12,111 @@ import java.util.List;
 @RequestMapping("/api/appointments")
 public class AppointmentController {
 
-    private final AppointmentService appointmentService;
-
-    public AppointmentController(AppointmentService appointmentService) {
-        this.appointmentService = appointmentService;
-    }
+    @Autowired
+    private AppointmentService appointmentService;
 
     @PostMapping("/book")
-    public Appointment bookAppointment(@RequestBody Appointment appointment) {
-        return appointmentService.bookAppointment(
-                appointment.getUser().getId(),
-                appointment.getDoctor().getId(),
-                appointment.getDateTime()
-        );
+    public AppointmentDto bookAppointment(@RequestBody AppointmentDto appointmentDto) {
+        return appointmentService.bookAppointment(appointmentDto);
     }
 
     @DeleteMapping("/cancel")
-    public void cancelAppointment(@RequestBody Appointment appointment) {
-        appointmentService.cancelAppointment(appointment.getId());
+    public void cancelAppointment(@RequestBody AppointmentDto appointmentDto) {
+        appointmentService.cancelAppointment(appointmentDto.getId());
     }
 
     @PutMapping("/update-status")
-    public Appointment updateStatus(@RequestBody Appointment appointment) {
-        return appointmentService.updateStatus(appointment.getId(), appointment.getStatus());
-    }
-
-    @GetMapping("/by-user")
-    public List<Appointment> getByUser(@RequestBody Appointment appointment) {
-        return appointmentService.getAppointmentsByUser(appointment.getUser().getId());
-    }
-
-    @GetMapping("/by-doctor")
-    public List<Appointment> getByDoctor(@RequestBody Appointment appointment) {
-        return appointmentService.getAppointmentsByDoctor(appointment.getDoctor().getId());
-    }
-
-    @PostMapping("/by-date-range")
-    public List<Appointment> getByDateRange(@RequestBody DateRange range) {
-        return appointmentService.getAppointmentsByDateRange(range.getStart(), range.getEnd());
-    }
-
-    @PostMapping("/by-user-status")
-    public List<Appointment> getByUserAndStatus(@RequestBody FilterRequest filterRequest) {
-        return appointmentService.getAppointmentsByUserAndStatus(filterRequest.getUserId(), filterRequest.getStatus());
-    }
-
-    @PostMapping("/by-doctor-status")
-    public List<Appointment> getByDoctorAndStatus(@RequestBody FilterRequest filterRequest) {
-        return appointmentService.getAppointmentsByDoctorAndStatus(filterRequest.getDoctorId(), filterRequest.getStatus());
-    }
-
-    @PostMapping("/by-date-range-status")
-    public List<Appointment> getByDateRangeAndStatus(@RequestBody FilterRequest filterRequest) {
-        return appointmentService.getAppointmentsByDateRangeAndStatus(filterRequest.getStart(), filterRequest.getEnd(), filterRequest.getStatus());
+    public AppointmentDto updateStatus(@RequestBody AppointmentDto appointmentDto) {
+        return appointmentService.updateStatus(appointmentDto.getId(), appointmentDto.getStatus());
     }
 
     @PutMapping("/update-result")
-    public Appointment updateResult(@RequestBody Appointment appointment) {
-        return appointmentService.updateResult(appointment.getId(), appointment.getResult());
+    public AppointmentDto updateResult(@RequestBody AppointmentDto appointmentDto) {
+        return appointmentService.updateResult(appointmentDto.getId(), appointmentDto.getResult());
+    }
+
+    @GetMapping("/all")
+    public List<AppointmentDto> getAllAppointments() {
+        return appointmentService.getAllAppointments();
+    }
+
+    @PostMapping("/by-user-status")
+    public List<AppointmentDto> getByUserAndStatus(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByUserAndStatus(filterRequestDto);
+    }
+
+    @PostMapping("/by-doctor-status")
+    public List<AppointmentDto> getByDoctorAndStatus(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByDoctorAndStatus(filterRequestDto);
+    }
+
+    @PostMapping("/by-date-range-status")
+    public List<AppointmentDto> getByDateRangeAndStatus(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByDateRangeAndStatus(filterRequestDto);
     }
 
     @PostMapping("/by-user-result")
-    public List<Appointment> getByUserAndResult(@RequestBody FilterRequest filterRequest) {
-        AppointmentResult result = AppointmentResult.valueOf(filterRequest.getResult().toUpperCase());
-        return appointmentService.getAppointmentsByUserAndResult(filterRequest.getUserId(), result);
+    public List<AppointmentDto> getByUserAndResult(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByUserAndResult(filterRequestDto);
     }
 
-
     @PostMapping("/by-doctor-result")
-    public List<Appointment> getByDoctorAndResult(@RequestBody FilterRequest filterRequest) {
-        AppointmentResult result = AppointmentResult.valueOf(filterRequest.getResult().toUpperCase());
-     return appointmentService.getAppointmentsByDoctorAndResult(filterRequest.getDoctorId(), result);
+    public List<AppointmentDto> getByDoctorAndResult(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByDoctorAndResult(filterRequestDto);
     }
 
     @PostMapping("/by-date-range-result")
-    public List<Appointment> getByDateRangeAndResult(@RequestBody FilterRequest filterRequest) {
-        AppointmentResult result = AppointmentResult.valueOf(filterRequest.getResult().toUpperCase());
-     return appointmentService.getAppointmentsByDateRangeAndResult(filterRequest.getStart(), filterRequest.getEnd(), result);
+    public List<AppointmentDto> getByDateRangeAndResult(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByDateRangeAndResult(filterRequestDto);
     }
 
+    @PostMapping("/by-specialty")
+    public List<AppointmentDto> getBySpecialty(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsBySpecialty(filterRequestDto.getSpecialtyId());
+    }
+
+    @PostMapping("/by-specialty-date-range")
+    public List<AppointmentDto> getBySpecialtyAndDateRange(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsBySpecialtyAndDateRange(
+                filterRequestDto.getSpecialtyId(),
+                filterRequestDto.getStart(),
+                filterRequestDto.getEnd()
+        );
+    }
+
+    @PostMapping("/by-specialty-status")
+    public List<AppointmentDto> getBySpecialtyAndStatus(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsBySpecialtyAndStatus(
+                filterRequestDto.getSpecialtyId(),
+                filterRequestDto.getStatus()
+        );
+    }
+
+    @PostMapping("/by-specialty-date-range-status")
+    public List<AppointmentDto> getBySpecialtyAndDateRangeAndStatus(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsBySpecialtyAndDateRangeAndStatus(
+                filterRequestDto.getSpecialtyId(),
+                filterRequestDto.getStart(),
+                filterRequestDto.getEnd(),
+                filterRequestDto.getStatus()
+        );
+    }
+
+    @PostMapping("/by-specialty-result")
+    public List<AppointmentDto> getBySpecialtyAndResult(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsBySpecialtyAndResult(
+                filterRequestDto.getSpecialtyId(),
+                filterRequestDto.getResult()
+        );
+    }
+
+    @PostMapping("/by-specialty-date-range-result")
+    public List<AppointmentDto> getBySpecialtyAndDateRangeAndResult(@RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsBySpecialtyAndDateRangeAndResult(
+                filterRequestDto.getSpecialtyId(),
+                filterRequestDto.getStart(),
+                filterRequestDto.getEnd(),
+                filterRequestDto.getResult()
+        );
+    }
 }
