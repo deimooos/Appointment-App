@@ -107,6 +107,27 @@ public class AppointmentService {
                 .collect(Collectors.toList());
     }
 
+    public List<AppointmentDto> getAppointmentsByUser(Long userId) {
+        return appointmentRepository.findByUserId(userId)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentDto> getAppointmentsByDoctor(Long doctorId) {
+        return appointmentRepository.findByDoctorId(doctorId)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentDto> getAppointmentsByDateRange(LocalDateTime start, LocalDateTime end) {
+        return appointmentRepository.findByDateTimeBetween(start, end)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
     public List<AppointmentDto> getAppointmentsByUserAndStatus(FilterRequestDto filter) {
         return appointmentRepository.findByUserIdAndStatus(filter.getUserId(), filter.getStatus())
                 .stream()
@@ -129,24 +150,21 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsByUserAndResult(FilterRequestDto filter) {
-        AppointmentResult resultEnum = AppointmentResult.valueOf(filter.getResult().toUpperCase());
-        return appointmentRepository.findByUserIdAndResult(filter.getUserId(), resultEnum)
+        return appointmentRepository.findByUserIdAndResult(filter.getUserId(), filter.getResult())
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public List<AppointmentDto> getAppointmentsByDoctorAndResult(FilterRequestDto filter) {
-        AppointmentResult resultEnum = AppointmentResult.valueOf(filter.getResult().toUpperCase());
-        return appointmentRepository.findByDoctorIdAndResult(filter.getDoctorId(), resultEnum)
+        return appointmentRepository.findByDoctorIdAndResult(filter.getDoctorId(), filter.getResult())
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public List<AppointmentDto> getAppointmentsByDateRangeAndResult(FilterRequestDto filter) {
-        AppointmentResult resultEnum = AppointmentResult.valueOf(filter.getResult().toUpperCase());
-        return appointmentRepository.findByDateTimeBetweenAndResult(filter.getStart(), filter.getEnd(), resultEnum)
+        return appointmentRepository.findByDateTimeBetweenAndResult(filter.getStart(), filter.getEnd(), filter.getResult())
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
@@ -180,19 +198,18 @@ public class AppointmentService {
                 .collect(Collectors.toList());
     }
 
-    public List<AppointmentDto> getAppointmentsBySpecialtyAndResult(Long specialtyId, String result) {
-        AppointmentResult resultEnum = AppointmentResult.valueOf(result.toUpperCase());
-        return appointmentRepository.findByDoctorSpecialtyIdAndResult(specialtyId, resultEnum)
+    public List<AppointmentDto> getAppointmentsBySpecialtyAndResult(Long specialtyId, AppointmentResult result) {
+        return appointmentRepository.findByDoctorSpecialtyIdAndResult(specialtyId, result)
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    public List<AppointmentDto> getAppointmentsBySpecialtyAndDateRangeAndResult(Long specialtyId, LocalDateTime start, LocalDateTime end, String result) {
-        AppointmentResult resultEnum = AppointmentResult.valueOf(result.toUpperCase());
-        return appointmentRepository.findByDoctorSpecialtyIdAndDateTimeBetweenAndResult(specialtyId, start, end, resultEnum)
+    public List<AppointmentDto> getAppointmentsBySpecialtyAndDateRangeAndResult(Long specialtyId, LocalDateTime start, LocalDateTime end, AppointmentResult result) {
+        return appointmentRepository.findByDoctorSpecialtyIdAndDateTimeBetweenAndResult(specialtyId, start, end, result)
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
+
 }

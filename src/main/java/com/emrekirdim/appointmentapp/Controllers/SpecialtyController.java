@@ -1,10 +1,11 @@
 package com.emrekirdim.appointmentapp.Controllers;
 
-import com.emrekirdim.appointmentapp.Models.Specialty;
+import com.emrekirdim.appointmentapp.DTO.SpecialtyDto;
 import com.emrekirdim.appointmentapp.Services.SpecialtyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -15,27 +16,27 @@ public class SpecialtyController {
     private SpecialtyService specialtyService;
 
     @PostMapping("/create")
-    public Specialty createSpecialty(@RequestBody Specialty specialty) {
-        return specialtyService.createSpecialty(specialty);
+    public SpecialtyDto createSpecialty(@Valid @RequestBody SpecialtyDto specialtyDto) {
+        return specialtyService.createSpecialty(specialtyDto);
     }
 
     @PutMapping("/update")
-    public Specialty updateSpecialty(@RequestBody Specialty specialty) {
-        return specialtyService.updateSpecialty(specialty);
+    public SpecialtyDto updateSpecialty(@Valid @RequestBody SpecialtyDto specialtyDto) {
+        return specialtyService.updateSpecialty(specialtyDto);
     }
 
     @DeleteMapping("/delete")
-    public void deleteSpecialty(@RequestBody Specialty specialty) {
-        specialtyService.deleteSpecialty(specialty.getId());
+    public void deleteSpecialty(@Valid @RequestBody SpecialtyDto specialtyDto) {
+        specialtyService.deleteSpecialty(specialtyDto.getId());
     }
 
     @GetMapping("/all")
-    public List<Specialty> getAllSpecialties() {
+    public List<SpecialtyDto> getAllSpecialties() {
         return specialtyService.getAllSpecialties();
     }
 
     @PostMapping("/get-by-id")
-    public Specialty getSpecialtyById(@RequestBody Specialty specialty) {
-        return specialtyService.getSpecialtyById(specialty.getId());
+    public SpecialtyDto getSpecialtyById(@Valid @RequestBody SpecialtyDto specialtyDto) {
+        return specialtyService.getSpecialtyById(specialtyDto.getId());
     }
 }

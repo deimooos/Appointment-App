@@ -11,7 +11,7 @@ public class FilterRequest {
     private LocalDateTime start;
     private LocalDateTime end;
     private AppointmentStatus status;
-    private String result;
+    private AppointmentResult result;
     private Long specialtyId;
 
 }

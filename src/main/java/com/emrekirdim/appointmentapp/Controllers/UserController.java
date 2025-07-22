@@ -5,6 +5,7 @@ import com.emrekirdim.appointmentapp.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -15,7 +16,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/create")
-    public UserDto createUser(@RequestBody UserDto userDto) {
+    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
         return userService.createUser(userDto);
     }
 
@@ -25,12 +26,12 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public UserDto updateUser(@RequestBody UserDto userDto) {
+    public UserDto updateUser(@Valid @RequestBody UserDto userDto) {
         return userService.updateUser(userDto);
     }
 
     @DeleteMapping("/delete")
-    public void deleteUser(@RequestBody UserDto userDto) {
+    public void deleteUser(@Valid @RequestBody UserDto userDto) {
         userService.deleteUser(userDto);
     }
 }

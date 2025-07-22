@@ -5,6 +5,7 @@ import com.emrekirdim.appointmentapp.DTO.FilterRequestDto;
 import com.emrekirdim.appointmentapp.Services.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 import java.util.List;
 
@@ -16,17 +17,17 @@ public class DoctorController {
     private DoctorService doctorService;
 
     @PostMapping("/create")
-    public DoctorDto createDoctor(@RequestBody DoctorDto doctorDto) {
+    public DoctorDto createDoctor(@Valid @RequestBody DoctorDto doctorDto) {
         return doctorService.createDoctor(doctorDto);
     }
 
     @PutMapping("/update")
-    public DoctorDto updateDoctor(@RequestBody DoctorDto doctorDto) {
+    public DoctorDto updateDoctor(@Valid @RequestBody DoctorDto doctorDto) {
         return doctorService.updateDoctor(doctorDto);
     }
 
     @DeleteMapping("/delete")
-    public void deleteDoctor(@RequestBody DoctorDto doctorDto) {
+    public void deleteDoctor(@Valid @RequestBody DoctorDto doctorDto) {
         doctorService.deleteDoctor(doctorDto);
     }
 
@@ -36,7 +37,7 @@ public class DoctorController {
     }
 
     @PostMapping("/by-specialty")
-    public List<DoctorDto> getDoctorsBySpecialty(@RequestBody FilterRequestDto filterRequestDto) {
+    public List<DoctorDto> getDoctorsBySpecialty(@Valid @RequestBody FilterRequestDto filterRequestDto) {
         return doctorService.getDoctorsBySpecialty(filterRequestDto.getSpecialtyId());
     }
 
