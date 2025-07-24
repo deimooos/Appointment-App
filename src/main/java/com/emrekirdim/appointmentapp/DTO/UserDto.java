@@ -13,10 +13,17 @@ public class UserDto {
 
     @NotBlank(message = "Name cannot be blank.")
     @Pattern(
-            regexp = "^([A-ZÇĞİÖŞÜ][a-zçğıöşü]+)(\\s[A-ZÇĞİÖŞÜ][a-zçğıöşü]+)+$",
-            message = "Name must contain at least two words, each starting with an uppercase letter followed by lowercase letters. Turkish characters are supported."
+            regexp = "^[A-ZÇİÖŞÜ][a-zçğıöşü]{1,20}(\\s[A-ZÇĞİÖŞÜ][a-zçğıöşü]{1,20})*$",
+            message = "Name must contain one or more words, each starting with an uppercase letter followed by lowercase letters."
     )
     private String name;
+
+    @NotBlank(message = "Surname cannot be blank.")
+    @Pattern(
+            regexp = "^[A-ZÇİÖŞÜ][a-zçğıöşü]{1,20}$",
+            message = "Surname must start with an uppercase letter followed by lowercase letters, Turkish characters are supported."
+    )
+    private String surname;
 
     @NotBlank(message = "Email cannot be blank.")
     @Email(message = "Email must be in a valid format.")

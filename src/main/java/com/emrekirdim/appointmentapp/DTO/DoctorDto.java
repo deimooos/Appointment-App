@@ -15,14 +15,27 @@ import javax.validation.constraints.NotNull;
 public class DoctorDto {
     private Long id;
 
+    @NotBlank(message = "Title cannot be blank")
+    @Pattern(
+            regexp = "^(Dr\\.|Doç\\.|Prof\\.|Uzm\\.|Yrd\\. Doç\\.)$",
+            message = "Title must be a valid Turkish medical title like Dr., Doç., Prof., etc."
+    )
+    private String title;
+
     @NotBlank(message = "Doctor name cannot be empty")
     @Pattern(
-            regexp = "^(?:(?:Dr\\.|Prof\\.|Mr\\.|Mrs\\.|Ms\\.)\\s+)+[A-ZÇĞİÖŞÜ][a-zçğıöşü]+(?:\\s[A-ZÇĞİÖŞÜ][a-zçğıöşü]+)+$",
-            message = "Name must start with one or more titles (e.g. Prof. Dr.) followed by at least two words starting with a capital letter, without trailing dots."
+            regexp = "^([A-ZÇİÖŞÜ][a-zçğıöşü]+)(\\s[A-ZÇĞİÖŞÜ][a-zçğıöşü]+)*$",
+            message = "Each word in the name must start with an uppercase letter and contain only Turkish letters."
     )
     private String name;
 
-    @Valid
-    @NotNull(message = "Specialty must be provided")
-    private SpecialtyDto specialty;
+    @NotBlank(message = "Doctor surname cannot be empty.")
+    @Pattern(
+            regexp = "^[A-ZÇİÖŞÜ][a-zçğıöşü]{1,20}$",
+            message = "Surname must start with a capital letter and contain only Turkish letters."
+    )
+    private String surname;
+
+    @NotNull(message = "Specialty ID is required")
+    private Long specialtyId;
 }

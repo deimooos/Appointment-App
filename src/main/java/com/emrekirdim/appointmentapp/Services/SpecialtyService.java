@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,7 +19,7 @@ public class SpecialtyService {
     private Specialty mapToEntity(SpecialtyDto dto) {
         Specialty specialty = new Specialty();
         specialty.setId(dto.getId());
-        specialty.setName(dto.getName());
+        specialty.setName(dto.getName().trim());
         return specialty;
     }
 
@@ -29,16 +30,32 @@ public class SpecialtyService {
         return dto;
     }
 
-    public SpecialtyDto createSpecialty(SpecialtyDto specialtyDto) {
-        Specialty specialty = mapToEntity(specialtyDto);
+    public SpecialtyDto createSpecialty(SpecialtyDto dto) {
+        Optional<Specialty> existing = specialtyRepository.findByName(dto.getName().trim());
+        if (existing.isPresent()) {
+            throw new IllegalArgumentException("A specialty with this name already exists.");
+        }
+
+        Specialty specialty = mapToEntity(dto);
         Specialty saved = specialtyRepository.save(specialty);
         return mapToDto(saved);
     }
 
     public SpecialtyDto updateSpecialty(SpecialtyDto specialtyDto) {
         Specialty specialty = mapToEntity(specialtyDto);
-        Specialty updated = specialtyRepository.save(specialty);
-        return mapToDto(updated);
+
+        Specialty existingSpecialty = specialtyRepository.findById(specialty.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Specialty not found with id: " + specialty.getId()));
+
+        boolean existsName = specialtyRepository.existsByName(specialty.getName())
+                && !existingSpecialty.getName().equals(specialty.getName());
+
+        if (existsName) {
+            throw new IllegalArgumentException("Specialty with this name already exists.");
+        }
+
+        Specialty updatedSpecialty = specialtyRepository.save(specialty);
+        return mapToDto(updatedSpecialty);
     }
 
     public void deleteSpecialty(Long id) {

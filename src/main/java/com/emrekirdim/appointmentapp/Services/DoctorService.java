@@ -22,18 +22,15 @@ public class DoctorService {
     private SpecialtyRepository specialtyRepository;
 
     private Doctor mapToEntity(DoctorDto dto) {
+        Specialty specialty = specialtyRepository.findById(dto.getSpecialtyId())
+                .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
         Doctor doctor = new Doctor();
         doctor.setId(dto.getId());
+        doctor.setTitle(dto.getTitle());
         doctor.setName(dto.getName());
+        doctor.setSurname(dto.getSurname());
+        doctor.setSpecialty(specialty);
 
-        if (dto.getSpecialty() != null) {
-            Specialty specialty = new Specialty();
-            specialty.setId(dto.getSpecialty().getId());
-            specialty.setName(dto.getSpecialty().getName());
-            doctor.setSpecialty(specialty);
-        } else {
-            doctor.setSpecialty(null);
-        }
         return doctor;
     }
 
@@ -41,18 +38,19 @@ public class DoctorService {
     private DoctorDto mapToDto(Doctor doctor) {
         DoctorDto dto = new DoctorDto();
         dto.setId(doctor.getId());
+        dto.setTitle(doctor.getTitle());
         dto.setName(doctor.getName());
+        dto.setSurname(doctor.getSurname());
+        dto.setSpecialtyId(doctor.getSpecialty().getId());
 
-        if (doctor.getSpecialty() != null) {
-            SpecialtyDto specialtyDto = new SpecialtyDto();
-            specialtyDto.setId(doctor.getSpecialty().getId());
-            specialtyDto.setName(doctor.getSpecialty().getName());
-            dto.setSpecialty(specialtyDto);
-        }
         return dto;
     }
 
     public DoctorDto createDoctor(DoctorDto doctorDto) {
+        doctorRepository.findByNameAndSurname(doctorDto.getName(), doctorDto.getSurname())
+                .ifPresent(existing -> {
+                    throw new RuntimeException("A doctor with the same name and surname already exists.");
+                });
         Doctor doctor = mapToEntity(doctorDto);
         Doctor savedDoctor = doctorRepository.save(doctor);
         return mapToDto(savedDoctor);
@@ -67,10 +65,27 @@ public class DoctorService {
 
     public DoctorDto updateDoctor(DoctorDto doctorDto) {
         Doctor doctor = mapToEntity(doctorDto);
+
+        Doctor existingDoctor = doctorRepository.findById(doctor.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Doctor not found with id: " + doctor.getId()));
+
+        boolean existsTitleNameSurname = doctorRepository.existsByTitleAndNameAndSurname(
+                doctor.getTitle(),
+                doctor.getName(),
+                doctor.getSurname()
+        ) && (
+                !existingDoctor.getTitle().equals(doctor.getTitle()) ||
+                        !existingDoctor.getName().equals(doctor.getName()) ||
+                        !existingDoctor.getSurname().equals(doctor.getSurname())
+        );
+
+        if (existsTitleNameSurname) {
+            throw new IllegalArgumentException("Doctor with this title, name and surname already exists.");
+        }
+
         Doctor updatedDoctor = doctorRepository.save(doctor);
         return mapToDto(updatedDoctor);
     }
-
     public void deleteDoctor(DoctorDto doctorDto) {
         Doctor doctor = mapToEntity(doctorDto);
         doctorRepository.delete(doctor);
