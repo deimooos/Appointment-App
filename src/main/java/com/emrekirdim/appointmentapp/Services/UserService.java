@@ -15,6 +15,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public void checkAnyUserExists() {
+        if (!userRepository.existsAnyUser()) {
+            throw new IllegalArgumentException("No users found in the system.");
+        }
+    }
+
     private User mapToEntity(UserDto dto) {
         User user = new User();
         user.setId(dto.getId());
@@ -65,6 +71,7 @@ public class UserService {
     }
 
     public List<UserDto> getAllUsers() {
+        checkAnyUserExists();
         return userRepository.findAll()
                 .stream()
                 .map(this::mapToDto)

@@ -60,6 +60,14 @@ public class AppointmentService {
     }
 
     public AppointmentDto bookAppointment(AppointmentDto dto) {
+
+        if (!userRepository.existsAnyUser()) {
+            throw new IllegalArgumentException("No users found in the system.");
+        }
+        if (!doctorRepository.existsAnyDoctor()) {
+            throw new IllegalArgumentException("No doctors found in the system.");
+        }
+
         if (dto.getDateTime().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Cannot book an appointment in the past.");
         }
@@ -101,6 +109,12 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAllAppointments() {
+        if (!userRepository.existsAnyUser()) {
+            throw new IllegalArgumentException("No users found in the system.");
+        }
+        if (!doctorRepository.existsAnyDoctor()) {
+            throw new IllegalArgumentException("No doctors found in the system.");
+        }
         return appointmentRepository.findAll()
                 .stream()
                 .map(this::mapToDto)
@@ -108,6 +122,9 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsByUser(Long userId) {
+        if (!userRepository.existsAnyUser()) {
+            throw new IllegalArgumentException("No users found in the system.");
+        }
         return appointmentRepository.findByUserId(userId)
                 .stream()
                 .map(this::mapToDto)
@@ -115,6 +132,9 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsByDoctor(Long doctorId) {
+        if (!doctorRepository.existsAnyDoctor()) {
+            throw new IllegalArgumentException("No doctors found in the system.");
+        }
         return appointmentRepository.findByDoctorId(doctorId)
                 .stream()
                 .map(this::mapToDto)
@@ -122,6 +142,13 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsByDateRange(LocalDateTime start, LocalDateTime end) {
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
         return appointmentRepository.findByDateTimeBetween(start, end)
                 .stream()
                 .map(this::mapToDto)
@@ -129,6 +156,9 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsByUserAndStatus(FilterRequestDto filter) {
+        if (!userRepository.existsAnyUser()) {
+            throw new IllegalArgumentException("No users found in the system.");
+        }
         return appointmentRepository.findByUserIdAndStatus(filter.getUserId(), filter.getStatus())
                 .stream()
                 .map(this::mapToDto)
@@ -136,6 +166,9 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsByDoctorAndStatus(FilterRequestDto filter) {
+        if (!doctorRepository.existsAnyDoctor()) {
+            throw new IllegalArgumentException("No doctors found in the system.");
+        }
         return appointmentRepository.findByDoctorIdAndStatus(filter.getDoctorId(), filter.getStatus())
                 .stream()
                 .map(this::mapToDto)
@@ -143,13 +176,26 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsByDateRangeAndStatus(FilterRequestDto filter) {
-        return appointmentRepository.findByDateTimeBetweenAndStatus(filter.getStart(), filter.getEnd(), filter.getStatus())
+        LocalDateTime start = filter.getStart();
+        LocalDateTime end = filter.getEnd();
+
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        return appointmentRepository.findByDateTimeBetweenAndStatus(start, end, filter.getStatus())
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public List<AppointmentDto> getAppointmentsByUserAndResult(FilterRequestDto filter) {
+        if (!userRepository.existsAnyUser()) {
+            throw new IllegalArgumentException("No users found in the system.");
+        }
         return appointmentRepository.findByUserIdAndResult(filter.getUserId(), filter.getResult())
                 .stream()
                 .map(this::mapToDto)
@@ -157,6 +203,9 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsByDoctorAndResult(FilterRequestDto filter) {
+        if (!doctorRepository.existsAnyDoctor()) {
+            throw new IllegalArgumentException("No doctors found in the system.");
+        }
         return appointmentRepository.findByDoctorIdAndResult(filter.getDoctorId(), filter.getResult())
                 .stream()
                 .map(this::mapToDto)
@@ -164,7 +213,17 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsByDateRangeAndResult(FilterRequestDto filter) {
-        return appointmentRepository.findByDateTimeBetweenAndResult(filter.getStart(), filter.getEnd(), filter.getResult())
+        LocalDateTime start = filter.getStart();
+        LocalDateTime end = filter.getEnd();
+
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        return appointmentRepository.findByDateTimeBetweenAndResult(start, end, filter.getResult())
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
@@ -178,6 +237,13 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsBySpecialtyAndDateRange(Long specialtyId, LocalDateTime start, LocalDateTime end) {
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
         return appointmentRepository.findByDoctorSpecialtyIdAndDateTimeBetween(specialtyId, start, end)
                 .stream()
                 .map(this::mapToDto)
@@ -192,6 +258,13 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsBySpecialtyAndDateRangeAndStatus(Long specialtyId, LocalDateTime start, LocalDateTime end, AppointmentStatus status) {
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
         return appointmentRepository.findByDoctorSpecialtyIdAndDateTimeBetweenAndStatus(specialtyId, start, end, status)
                 .stream()
                 .map(this::mapToDto)
@@ -206,6 +279,13 @@ public class AppointmentService {
     }
 
     public List<AppointmentDto> getAppointmentsBySpecialtyAndDateRangeAndResult(Long specialtyId, LocalDateTime start, LocalDateTime end, AppointmentResult result) {
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
         return appointmentRepository.findByDoctorSpecialtyIdAndDateTimeBetweenAndResult(specialtyId, start, end, result)
                 .stream()
                 .map(this::mapToDto)

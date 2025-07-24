@@ -21,6 +21,12 @@ public class DoctorService {
     @Autowired
     private SpecialtyRepository specialtyRepository;
 
+    public void checkAnyDoctorExists() {
+        if (!doctorRepository.existsAnyDoctor()) {
+            throw new IllegalArgumentException("No doctors found in the system.");
+        }
+    }
+
     private Doctor mapToEntity(DoctorDto dto) {
         Specialty specialty = specialtyRepository.findById(dto.getSpecialtyId())
                 .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
@@ -57,6 +63,7 @@ public class DoctorService {
     }
 
     public List<DoctorDto> getAllDoctors() {
+        checkAnyDoctorExists();
         return doctorRepository.findAll()
                 .stream()
                 .map(this::mapToDto)
