@@ -3,6 +3,7 @@ package com.emrekirdim.appointmentapp.Controllers;
 import com.emrekirdim.appointmentapp.DTO.SpecialtyDto;
 import com.emrekirdim.appointmentapp.Services.SpecialtyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,18 +17,21 @@ public class SpecialtyController {
     private SpecialtyService specialtyService;
 
     @PostMapping("/create")
-    public SpecialtyDto createSpecialty(@Valid @RequestBody SpecialtyDto specialtyDto) {
-        return specialtyService.createSpecialty(specialtyDto);
+    public ResponseEntity<String> createSpecialty(@Valid @RequestBody SpecialtyDto specialtyDto) {
+        specialtyService.createSpecialty(specialtyDto);
+        return ResponseEntity.ok("Specialty created successfully.");
     }
 
     @PutMapping("/update")
-    public SpecialtyDto updateSpecialty(@Valid @RequestBody SpecialtyDto specialtyDto) {
-        return specialtyService.updateSpecialty(specialtyDto);
+    public ResponseEntity<String> updateSpecialty(@Valid @RequestBody SpecialtyDto specialtyDto) {
+        specialtyService.updateSpecialty(specialtyDto);
+        return ResponseEntity.ok("Specialty updated successfully.");
     }
 
     @DeleteMapping("/delete")
-    public void deleteSpecialty(@Valid @RequestBody SpecialtyDto specialtyDto) {
+    public ResponseEntity<String> deleteSpecialty(@Valid @RequestBody SpecialtyDto specialtyDto) {
         specialtyService.deleteSpecialty(specialtyDto.getId());
+        return ResponseEntity.ok("Specialty deleted successfully.");
     }
 
     @GetMapping("/all")

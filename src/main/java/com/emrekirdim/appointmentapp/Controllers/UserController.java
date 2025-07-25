@@ -3,6 +3,7 @@ package com.emrekirdim.appointmentapp.Controllers;
 import com.emrekirdim.appointmentapp.DTO.UserDto;
 import com.emrekirdim.appointmentapp.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,8 +17,9 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/create")
-    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
-        return userService.createUser(userDto);
+    public ResponseEntity<String> createUser(@Valid @RequestBody UserDto userDto) {
+        userService.createUser(userDto);
+        return ResponseEntity.ok("User created successfully.");
     }
 
     @GetMapping("/all")
@@ -26,12 +28,14 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public UserDto updateUser(@Valid @RequestBody UserDto userDto) {
-        return userService.updateUser(userDto);
+    public ResponseEntity<String> updateUser(@Valid @RequestBody UserDto userDto) {
+        userService.updateUser(userDto);
+        return ResponseEntity.ok("User updated successfully.");
     }
 
     @DeleteMapping("/delete")
-    public void deleteUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<String> deleteUser(@Valid @RequestBody UserDto userDto) {
         userService.deleteUser(userDto);
+        return ResponseEntity.ok("User deleted successfully.");
     }
 }

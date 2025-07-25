@@ -4,6 +4,7 @@ import com.emrekirdim.appointmentapp.DTO.AppointmentDto;
 import com.emrekirdim.appointmentapp.DTO.FilterRequestDto;
 import com.emrekirdim.appointmentapp.Services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,23 +18,27 @@ public class AppointmentController {
     private AppointmentService appointmentService;
 
     @PostMapping("/book")
-    public AppointmentDto bookAppointment(@Valid @RequestBody AppointmentDto appointmentDto) {
-        return appointmentService.bookAppointment(appointmentDto);
+    public ResponseEntity<String> bookAppointment(@Valid @RequestBody AppointmentDto appointmentDto) {
+        appointmentService.bookAppointment(appointmentDto);
+        return ResponseEntity.ok("Appointment booked successfully.");
     }
 
     @DeleteMapping("/cancel")
-    public void cancelAppointment(@Valid @RequestBody AppointmentDto appointmentDto) {
+    public ResponseEntity<String> cancelAppointment(@Valid @RequestBody AppointmentDto appointmentDto) {
         appointmentService.cancelAppointment(appointmentDto.getId());
+        return ResponseEntity.ok("Appointment cancelled successfully.");
     }
 
     @PutMapping("/update-status")
-    public AppointmentDto updateStatus(@Valid @RequestBody AppointmentDto appointmentDto) {
-        return appointmentService.updateStatus(appointmentDto.getId(), appointmentDto.getStatus());
+    public ResponseEntity<String> updateStatus(@Valid @RequestBody AppointmentDto appointmentDto) {
+        appointmentService.updateStatus(appointmentDto.getId(), appointmentDto.getStatus());
+        return ResponseEntity.ok("Appointment status updated successfully.");
     }
 
     @PutMapping("/update-result")
-    public AppointmentDto updateResult(@Valid @RequestBody AppointmentDto appointmentDto) {
-        return appointmentService.updateResult(appointmentDto.getId(), appointmentDto.getResult());
+    public ResponseEntity<String> updateResult(@Valid @RequestBody AppointmentDto appointmentDto) {
+        appointmentService.updateResult(appointmentDto.getId(), appointmentDto.getResult());
+        return ResponseEntity.ok("Appointment result updated successfully.");
     }
 
     @GetMapping("/all")
