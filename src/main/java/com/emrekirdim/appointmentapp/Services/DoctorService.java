@@ -94,7 +94,12 @@ public class DoctorService {
         return mapToDto(updatedDoctor);
     }
     public void deleteDoctor(DoctorDto doctorDto) {
-        Doctor doctor = mapToEntity(doctorDto);
+        Long id = doctorDto.getId();
+        if (id == null) {
+            throw new IllegalArgumentException("Doctor id must not be null.");
+        }
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Doctor not found with id: " + id));
         doctorRepository.delete(doctor);
     }
 

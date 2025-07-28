@@ -24,7 +24,7 @@ public class AppointmentController {
     }
 
     @DeleteMapping("/cancel")
-    public ResponseEntity<String> cancelAppointment(@Valid @RequestBody AppointmentDto appointmentDto) {
+    public ResponseEntity<String> cancelAppointment(@RequestBody AppointmentDto appointmentDto) {
         appointmentService.cancelAppointment(appointmentDto.getId());
         return ResponseEntity.ok("Appointment cancelled successfully.");
     }

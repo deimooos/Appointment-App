@@ -89,7 +89,11 @@ public class AppointmentService {
 
     public void cancelAppointment(Long id) {
         Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found with id: " + id));
+
+        if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
+            throw new IllegalArgumentException("Appointment is already cancelled.");
+        }
         appointment.setStatus(AppointmentStatus.CANCELLED);
         appointmentRepository.save(appointment);
     }

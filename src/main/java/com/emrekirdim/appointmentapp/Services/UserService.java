@@ -118,7 +118,12 @@ public class UserService {
     }
 
     public void deleteUser(UserDto userDto) {
-        User user = mapToEntity(userDto);
+        Long id = userDto.getId();
+        if (id == null) {
+            throw new IllegalArgumentException("User id must not be null.");
+        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
         userRepository.delete(user);
     }
 

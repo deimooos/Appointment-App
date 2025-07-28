@@ -30,7 +30,7 @@ public class DoctorController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteDoctor(@Valid @RequestBody DoctorDto doctorDto) {
+    public ResponseEntity<String> deleteDoctor(@RequestBody DoctorDto doctorDto) {
         doctorService.deleteDoctor(doctorDto);
         return ResponseEntity.ok("Doctor deleted successfully.");
     }

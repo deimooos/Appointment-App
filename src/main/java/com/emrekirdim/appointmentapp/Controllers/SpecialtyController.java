@@ -29,8 +29,8 @@ public class SpecialtyController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteSpecialty(@Valid @RequestBody SpecialtyDto specialtyDto) {
-        specialtyService.deleteSpecialty(specialtyDto.getId());
+    public ResponseEntity<String> deleteSpecialty(@RequestBody SpecialtyDto specialtyDto) {
+        specialtyService.deleteSpecialty(specialtyDto);
         return ResponseEntity.ok("Specialty deleted successfully.");
     }
 
