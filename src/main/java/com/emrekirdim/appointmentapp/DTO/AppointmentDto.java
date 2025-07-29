@@ -1,10 +1,12 @@
 package com.emrekirdim.appointmentapp.DTO;
 
+import javax.validation.constraints.*;
+
 import com.emrekirdim.appointmentapp.Models.AppointmentResult;
 import com.emrekirdim.appointmentapp.Models.AppointmentStatus;
-import javax.validation.constraints.*;
 import lombok.Data;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import java.time.LocalDateTime;
 
 @Data
@@ -24,9 +26,9 @@ public class AppointmentDto {
     @FutureOrPresent(message = "DateTime cannot be in the past.")
     private LocalDateTime dateTime;
 
-    @NotNull(message = "Status cannot be null.")
+    @JsonProperty(access = Access.READ_ONLY)
     private AppointmentStatus status;
 
-    @NotNull(message = "Result cannot be null.")
+    @JsonProperty(access = Access.READ_ONLY)
     private AppointmentResult result;
 }
