@@ -1,6 +1,7 @@
 package com.emrekirdim.appointmentapp.Controllers;
 
 import com.emrekirdim.appointmentapp.DTO.SpecialtyDto;
+import com.emrekirdim.appointmentapp.DTO.FilterRequestDto;
 import com.emrekirdim.appointmentapp.Services.SpecialtyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,7 +49,7 @@ public class SpecialtyController {
 
     @Operation(summary = "Get a specialty by ID", description = "Retrieves a specialty using its ID.")
     @PostMapping("/get-by-id")
-    public SpecialtyDto getSpecialtyById(@Valid @RequestBody SpecialtyDto specialtyDto) {
-        return specialtyService.getSpecialtyById(specialtyDto.getId());
+    public SpecialtyDto getSpecialtyById(@Valid @RequestBody FilterRequestDto filterRequestDto) {
+        return specialtyService.getSpecialtyById(filterRequestDto.getSpecialtyId());
     }
 }
