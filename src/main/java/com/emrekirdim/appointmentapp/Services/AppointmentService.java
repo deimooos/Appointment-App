@@ -42,8 +42,8 @@ public class AppointmentService {
         appointment.setUser(user);
         appointment.setDoctor(doctor);
         appointment.setDateTime(dto.getDateTime());
-        appointment.setStatus(dto.getStatus() != null ? dto.getStatus() : AppointmentStatus.SCHEDULED);
-        appointment.setResult(dto.getResult() != null ? dto.getResult() : AppointmentResult.UNKNOWN);
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
+        appointment.setResult(AppointmentResult.UNKNOWN);
 
         return appointment;
     }
@@ -91,9 +91,10 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found with id: " + id));
 
-        if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
-            throw new IllegalArgumentException("Appointment is already cancelled.");
+        if (appointment.getStatus() != AppointmentStatus.SCHEDULED) {
+            throw new IllegalArgumentException("Only scheduled appointments can be cancelled.");
         }
+
         appointment.setStatus(AppointmentStatus.CANCELLED);
         appointmentRepository.save(appointment);
     }
@@ -101,25 +102,40 @@ public class AppointmentService {
     public AppointmentDto completeAppointment(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        if (appointment.getStatus() != AppointmentStatus.SCHEDULED) {
+            throw new IllegalArgumentException("Only scheduled appointments can be marked as completed.");
+        }
+
         appointment.setStatus(AppointmentStatus.COMPLETED);
-        appointmentRepository.save(appointment);
-        return mapToDto(appointment);
+        Appointment updated = appointmentRepository.save(appointment);
+        return mapToDto(updated);
     }
 
     public AppointmentDto successfulAppointment(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        if (appointment.getStatus() != AppointmentStatus.COMPLETED) {
+            throw new IllegalArgumentException("Only completed appointments can have a successful result.");
+        }
+
         appointment.setResult(AppointmentResult.SUCCESSFUL);
-        appointmentRepository.save(appointment);
-        return mapToDto(appointment);
+        Appointment updated = appointmentRepository.save(appointment);
+        return mapToDto(updated);
     }
 
     public AppointmentDto unsuccessfulAppointment(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        if (appointment.getStatus() != AppointmentStatus.COMPLETED) {
+            throw new IllegalArgumentException("Only completed appointments can have an unsuccessful result.");
+        }
+
         appointment.setResult(AppointmentResult.UNSUCCESSFUL);
-        appointmentRepository.save(appointment);
-        return mapToDto(appointment);
+        Appointment updated = appointmentRepository.save(appointment);
+        return mapToDto(updated);
     }
 
     public List<AppointmentDto> getAllAppointments() {
