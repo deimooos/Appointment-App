@@ -5,7 +5,6 @@ import com.emrekirdim.appointmentapp.Models.AppointmentStatus;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 

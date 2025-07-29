@@ -47,7 +47,7 @@ public class UserService {
         User user = mapToEntity(userDto);
 
         if (!isValidTurkishId(user.getIdNum())) {
-            throw new IllegalArgumentException("Invalid idetification number.");
+            throw new IllegalArgumentException("Invalid identification number.");
         }
 
         if(userRepository.existsByNameAndSurname(user.getName(), user.getSurname())) {
