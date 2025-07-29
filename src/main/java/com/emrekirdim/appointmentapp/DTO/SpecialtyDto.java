@@ -2,6 +2,8 @@ package com.emrekirdim.appointmentapp.DTO;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
@@ -11,6 +13,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class SpecialtyDto {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @NotBlank(message = "Specialty name cannot be blank")

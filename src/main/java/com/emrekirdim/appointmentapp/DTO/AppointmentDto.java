@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 public class AppointmentDto {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @NotNull(message = "UserId cannot be null.")
