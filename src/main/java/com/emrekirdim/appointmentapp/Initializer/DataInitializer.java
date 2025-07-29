@@ -33,13 +33,13 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         Specialty cardiology = specialtyRepository.findByName("Cardiology").orElseGet(() -> {
-            Specialty s = new Specialty(null, "Cardiology");
-            return specialtyRepository.save(s);
+            Specialty specialty1 = new Specialty(null, "Cardiology");
+            return specialtyRepository.save(specialty1);
         });
 
         Specialty dermatology = specialtyRepository.findByName("Dermatology").orElseGet(() -> {
-            Specialty s = new Specialty(null, "Dermatology");
-            return specialtyRepository.save(s);
+            Specialty specialty2 = new Specialty(null, "Dermatology");
+            return specialtyRepository.save(specialty2);
         });
 
         if (!doctorRepository.existsAnyDoctor()) {

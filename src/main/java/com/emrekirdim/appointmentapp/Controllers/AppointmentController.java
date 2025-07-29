@@ -34,18 +34,25 @@ public class AppointmentController {
         return ResponseEntity.ok("Appointment cancelled successfully.");
     }
 
-    @Operation(summary = "Update appointment status", description = "Updates the status of an appointment.")
-    @PutMapping("/update-status")
-    public ResponseEntity<String> updateStatus(@Valid @RequestBody AppointmentDto appointmentDto) {
-        appointmentService.updateStatus(appointmentDto.getId(), appointmentDto.getStatus());
-        return ResponseEntity.ok("Appointment status updated successfully.");
+    @Operation(summary = "Mark an appointment as completed")
+    @PutMapping("/complete")
+    public ResponseEntity<String> completeAppointment(@RequestBody AppointmentDto appointmentDto) {
+        appointmentService.completeAppointment(appointmentDto.getId());
+        return ResponseEntity.ok("Appointment marked as completed.");
     }
 
-    @Operation(summary = "Update appointment result", description = "Updates the result of an appointment.")
-    @PutMapping("/update-result")
-    public ResponseEntity<String> updateResult(@Valid @RequestBody AppointmentDto appointmentDto) {
-        appointmentService.updateResult(appointmentDto.getId(), appointmentDto.getResult());
-        return ResponseEntity.ok("Appointment result updated successfully.");
+    @Operation(summary = "Mark appointment result as successful")
+    @PutMapping("/successful")
+    public ResponseEntity<String> markAsSuccessful(@RequestBody AppointmentDto appointmentDto) {
+        appointmentService.successfulAppointment(appointmentDto.getId());
+        return ResponseEntity.ok("Appointment result marked as successful.");
+    }
+
+    @Operation(summary = "Mark appointment result as unsuccessful")
+    @PutMapping("/unsuccessful")
+    public ResponseEntity<String> markAsUnsuccessful(@RequestBody AppointmentDto appointmentDto) {
+        appointmentService.unsuccessfulAppointment(appointmentDto.getId());
+        return ResponseEntity.ok("Appointment result marked as unsuccessful.");
     }
 
     @Operation(summary = "Retrieve all appointments", description = "Returns a list of all appointments.")

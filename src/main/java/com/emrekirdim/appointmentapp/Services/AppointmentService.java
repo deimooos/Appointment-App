@@ -98,18 +98,28 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
     }
 
-    public AppointmentDto updateStatus(Long appointmentId, AppointmentStatus status) {
+    public AppointmentDto completeAppointment(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
-        appointment.setStatus(status);
-        return mapToDto(appointmentRepository.save(appointment));
+        appointment.setStatus(AppointmentStatus.COMPLETED);
+        appointmentRepository.save(appointment);
+        return mapToDto(appointment);
     }
 
-    public AppointmentDto updateResult(Long appointmentId, AppointmentResult result) {
+    public AppointmentDto successfulAppointment(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
-        appointment.setResult(result);
-        return mapToDto(appointmentRepository.save(appointment));
+        appointment.setResult(AppointmentResult.SUCCESSFUL);
+        appointmentRepository.save(appointment);
+        return mapToDto(appointment);
+    }
+
+    public AppointmentDto unsuccessfulAppointment(Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+        appointment.setResult(AppointmentResult.UNSUCCESSFUL);
+        appointmentRepository.save(appointment);
+        return mapToDto(appointment);
     }
 
     public List<AppointmentDto> getAllAppointments() {
