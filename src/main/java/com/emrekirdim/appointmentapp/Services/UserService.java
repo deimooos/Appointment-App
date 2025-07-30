@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class UserService implements GenericService<UserDto, Long> {
 
     @Autowired
     private UserRepository userRepository;
@@ -43,7 +43,8 @@ public class UserService {
         return dto;
     }
 
-    public UserDto createUser(UserDto userDto) {
+    @Override
+    public UserDto create(UserDto userDto) {
         User user = mapToEntity(userDto);
 
         if (!isValidTurkishId(user.getIdNum())) {
@@ -53,15 +54,12 @@ public class UserService {
         if(userRepository.existsByNameAndSurname(user.getName(), user.getSurname())) {
             throw new IllegalArgumentException("User with this name and surname already exists.");
         }
-
         if(userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email is already registered.");
         }
-
         if(userRepository.existsByPhone(user.getPhone())) {
             throw new IllegalArgumentException("Phone number is already registered.");
         }
-
         if(userRepository.existsByIdNum(user.getIdNum())) {
             throw new IllegalArgumentException("Identification number is already registered.");
         }
@@ -70,7 +68,8 @@ public class UserService {
         return mapToDto(savedUser);
     }
 
-    public List<UserDto> getAllUsers() {
+    @Override
+    public List<UserDto> getAll() {
         checkAnyUserExists();
         return userRepository.findAll()
                 .stream()
@@ -78,8 +77,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDto updateUser(UserDto userDto) {
+    @Override
+    public UserDto update(UserDto userDto) {
         User user = mapToEntity(userDto);
+
+        if (userDto.getId() == null) {
+            throw new IllegalArgumentException("User id must not be null.");
+        }
 
         if (!isValidTurkishId(user.getIdNum())) {
             throw new IllegalArgumentException("Invalid idetification number.");
@@ -117,8 +121,8 @@ public class UserService {
         return mapToDto(updatedUser);
     }
 
-    public void deleteUser(UserDto userDto) {
-        Long id = userDto.getId();
+    @Override
+    public void delete(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("User id must not be null.");
         }
@@ -151,5 +155,4 @@ public class UserService {
         int digit11 = total % 10;
         return digit11 == digits[10];
     }
-
 }
