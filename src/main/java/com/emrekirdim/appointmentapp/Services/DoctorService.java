@@ -3,7 +3,6 @@ package com.emrekirdim.appointmentapp.Services;
 import com.emrekirdim.appointmentapp.DTO.DoctorDto;
 import com.emrekirdim.appointmentapp.Models.Doctor;
 import com.emrekirdim.appointmentapp.Models.Specialty;
-import com.emrekirdim.appointmentapp.DTO.SpecialtyDto;
 import com.emrekirdim.appointmentapp.Repositories.DoctorRepository;
 import com.emrekirdim.appointmentapp.Repositories.SpecialtyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class DoctorService {
+public class DoctorService implements GenericService<DoctorDto, Long> {
 
     @Autowired
     private DoctorRepository doctorRepository;
@@ -40,7 +39,6 @@ public class DoctorService {
         return doctor;
     }
 
-
     private DoctorDto mapToDto(Doctor doctor) {
         DoctorDto dto = new DoctorDto();
         dto.setId(doctor.getId());
@@ -52,7 +50,8 @@ public class DoctorService {
         return dto;
     }
 
-    public DoctorDto createDoctor(DoctorDto doctorDto) {
+    @Override
+    public DoctorDto create(DoctorDto doctorDto) {
         doctorRepository.findByNameAndSurname(doctorDto.getName(), doctorDto.getSurname())
                 .ifPresent(existing -> {
                     throw new RuntimeException("A doctor with the same name and surname already exists.");
@@ -62,7 +61,8 @@ public class DoctorService {
         return mapToDto(savedDoctor);
     }
 
-    public List<DoctorDto> getAllDoctors() {
+    @Override
+    public List<DoctorDto> getAll() {
         checkAnyDoctorExists();
         return doctorRepository.findAll()
                 .stream()
@@ -70,7 +70,8 @@ public class DoctorService {
                 .collect(Collectors.toList());
     }
 
-    public DoctorDto updateDoctor(DoctorDto doctorDto) {
+    @Override
+    public DoctorDto update(DoctorDto doctorDto) {
         Doctor doctor = mapToEntity(doctorDto);
 
         Doctor existingDoctor = doctorRepository.findById(doctor.getId())
@@ -93,8 +94,9 @@ public class DoctorService {
         Doctor updatedDoctor = doctorRepository.save(doctor);
         return mapToDto(updatedDoctor);
     }
-    public void deleteDoctor(DoctorDto doctorDto) {
-        Long id = doctorDto.getId();
+
+    @Override
+    public void delete(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Doctor id must not be null.");
         }
