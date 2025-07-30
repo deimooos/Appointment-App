@@ -10,7 +10,6 @@ import javax.validation.constraints.Pattern;
 @Data
 public class UserDto {
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @NotBlank(message = "Name cannot be blank.")

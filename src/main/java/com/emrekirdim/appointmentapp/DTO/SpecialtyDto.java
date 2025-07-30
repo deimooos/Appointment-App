@@ -13,7 +13,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class SpecialtyDto {
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @NotBlank(message = "Specialty name cannot be blank")
