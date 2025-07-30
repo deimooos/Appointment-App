@@ -1,12 +1,12 @@
 package com.emrekirdim.appointmentapp.Controllers;
 
+import com.emrekirdim.appointmentapp.DTO.IdRequestDto;
 import com.emrekirdim.appointmentapp.Services.GenericService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 public abstract class GenericController<T, ID> {
 
@@ -34,9 +34,8 @@ public abstract class GenericController<T, ID> {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> delete(@RequestBody Map<String, ID> body) {
-        ID id = body.get("id");
-        getService().delete(id);
+    public ResponseEntity<String> delete(@Valid @RequestBody IdRequestDto<ID> request) {
+        getService().delete(request.getId());
         return ResponseEntity.ok(getDeleteMessage());
     }
 }

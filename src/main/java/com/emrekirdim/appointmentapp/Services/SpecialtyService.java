@@ -8,11 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class SpecialtyService {
+public class SpecialtyService implements GenericService<SpecialtyDto, Long> {
 
     @Autowired
     private SpecialtyRepository specialtyRepository;
@@ -34,19 +33,26 @@ public class SpecialtyService {
         return dto;
     }
 
-    public SpecialtyDto createSpecialty(SpecialtyDto dto) {
-        Optional<Specialty> existing = specialtyRepository.findByName(dto.getName().trim());
-        if (existing.isPresent()) {
+    @Override
+    public SpecialtyDto create(SpecialtyDto dto) {
+        if (specialtyRepository.findByName(dto.getName().trim()).isPresent()) {
             throw new IllegalArgumentException("A specialty with this name already exists.");
         }
-
-        Specialty specialty = mapToEntity(dto);
-        Specialty saved = specialtyRepository.save(specialty);
+        Specialty saved = specialtyRepository.save(mapToEntity(dto));
         return mapToDto(saved);
     }
 
-    public SpecialtyDto updateSpecialty(SpecialtyDto specialtyDto) {
-        Specialty specialty = mapToEntity(specialtyDto);
+    @Override
+    public List<SpecialtyDto> getAll() {
+        return specialtyRepository.findAll()
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public SpecialtyDto update(SpecialtyDto dto) {
+        Specialty specialty = mapToEntity(dto);
 
         Specialty existingSpecialty = specialtyRepository.findById(specialty.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Specialty not found with id: " + specialty.getId()));
@@ -62,8 +68,8 @@ public class SpecialtyService {
         return mapToDto(updatedSpecialty);
     }
 
-    public void deleteSpecialty(SpecialtyDto specialtyDto) {
-        Long id = specialtyDto.getId();
+    @Override
+    public void delete(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Specialty id must not be null.");
         }
@@ -76,16 +82,9 @@ public class SpecialtyService {
         specialtyRepository.delete(specialty);
     }
 
-    public List<SpecialtyDto> getAllSpecialties() {
-        return specialtyRepository.findAll()
-                .stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
-    }
-
-    public SpecialtyDto getSpecialtyById(Long id) {
+    public SpecialtyDto getById(Long id) {
         Specialty specialty = specialtyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Specialty not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Specialty not found with id: " + id));
         return mapToDto(specialty);
     }
 }
