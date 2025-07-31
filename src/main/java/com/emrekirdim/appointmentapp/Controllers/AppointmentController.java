@@ -195,10 +195,7 @@ public class AppointmentController extends BasicGenericController<AppointmentDto
         }
     }
 
-    @Operation(
-            summary = "Get doctor's daily availability",
-            description = "Returns a list of available appointment times for a specific doctor on a given date."
-    )
+    @Operation(summary = "Get doctor's daily availability", description = "Returns a list of available appointment times for a specific doctor on a given date.")
     @PostMapping("/daily-availability")
     public ResponseEntity<List<LocalDateTime>> getDoctorDailyAvailability(
             @Valid @RequestBody DoctorDailyAvailabilityRequestDto requestDto) {
@@ -206,6 +203,13 @@ public class AppointmentController extends BasicGenericController<AppointmentDto
                 appointmentService.getAvailableTimeSlots(requestDto.getDoctorId(), requestDto.getDate());
         return ResponseEntity.ok(availableSlots);
     }
+
+    @Operation(summary = "Get user appointments filtered by time type (past, upcoming, all)", description = "Returns user appointments filtered by past, upcoming, or all time.")
+    @PostMapping("/by-user-history")
+    public List<AppointmentDto> getByUserHistory(@Valid @RequestBody AppointmentHistoryFilterDto filter) {
+        return appointmentService.getAppointmentsByUserAndTimeType(filter);
+    }
+
 
 
 }

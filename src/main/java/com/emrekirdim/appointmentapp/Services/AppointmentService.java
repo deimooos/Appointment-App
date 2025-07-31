@@ -1,6 +1,7 @@
 package com.emrekirdim.appointmentapp.Services;
 
 import com.emrekirdim.appointmentapp.DTO.AppointmentDto;
+import com.emrekirdim.appointmentapp.DTO.AppointmentHistoryFilterDto;
 import com.emrekirdim.appointmentapp.DTO.FilterRequestDto;
 import com.emrekirdim.appointmentapp.Models.Appointment;
 import com.emrekirdim.appointmentapp.Models.AppointmentResult;
@@ -386,6 +387,47 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
 
         return availableSlots;
     }
+
+    public List<AppointmentDto> getAppointmentsByUserAndTimeType(AppointmentHistoryFilterDto filter) {
+        if (filter.getUserId() == null || !userRepository.existsById(filter.getUserId())) {
+            throw new IllegalArgumentException("Valid userId must be provided.");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        List<Appointment> appointments;
+
+        switch (filter.getTimeType()) {
+            case PAST:
+                appointments = appointmentRepository.findByUserIdAndDateTimeBefore(
+                        filter.getUserId(), now);
+                break;
+            case UPCOMING:
+                appointments = appointmentRepository.findByUserIdAndDateTimeAfter(
+                        filter.getUserId(), now);
+                break;
+            case ALL:
+            default:
+                appointments = appointmentRepository.findByUserId(filter.getUserId());
+                break;
+        }
+
+        if (filter.getStatus() != null) {
+            appointments = appointments.stream()
+                    .filter(a -> a.getStatus() == filter.getStatus())
+                    .collect(Collectors.toList());
+        }
+
+        if (filter.getResult() != null) {
+            appointments = appointments.stream()
+                    .filter(a -> a.getResult() == filter.getResult())
+                    .collect(Collectors.toList());
+        }
+
+        return appointments.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
 
 
 

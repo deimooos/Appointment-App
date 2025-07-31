@@ -28,5 +28,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByDoctorSpecialtyIdAndDateTimeBetweenAndStatus(Long specialtyId, LocalDateTime start, LocalDateTime end, AppointmentStatus status);
     List<Appointment> findByDoctorSpecialtyIdAndResult(Long specialtyId, AppointmentResult result);
     List<Appointment> findByDoctorSpecialtyIdAndDateTimeBetweenAndResult(Long specialtyId, LocalDateTime start, LocalDateTime end, AppointmentResult result);
+    List<Appointment> findByUserIdAndDateTimeBefore(Long userId, LocalDateTime dateTime);
+    List<Appointment> findByUserIdAndDateTimeAfter(Long userId, LocalDateTime dateTime);
 
 }
