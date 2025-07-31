@@ -31,5 +31,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByDoctorSpecialtyIdAndDateTimeBetweenAndResult(Long specialtyId, LocalDateTime start, LocalDateTime end, AppointmentResult result);
     List<Appointment> findByUserIdAndDateTimeBefore(Long userId, LocalDateTime dateTime);
     List<Appointment> findByUserIdAndDateTimeAfter(Long userId, LocalDateTime dateTime);
+    List<Appointment> findByUserIdAndDateTimeBetween(Long userId, LocalDateTime start, LocalDateTime end);
+    List<Appointment> findByUserIdAndDateTimeBetweenAndStatus(Long userId, LocalDateTime start, LocalDateTime end, AppointmentStatus status);
+    List<Appointment> findByUserIdAndDateTimeBetweenAndResult(Long userId, LocalDateTime start, LocalDateTime end, AppointmentResult result);
+    List<Appointment> findByDoctorIdAndDateTimeBetween(Long doctorId, LocalDateTime start, LocalDateTime end);
+    List<Appointment> findByDoctorIdAndDateTimeBetweenAndStatus(Long doctorId, LocalDateTime start, LocalDateTime end, AppointmentStatus status);
+    List<Appointment> findByDoctorIdAndDateTimeBetweenAndResult(Long doctorId, LocalDateTime start, LocalDateTime end, AppointmentResult result);
 
 }

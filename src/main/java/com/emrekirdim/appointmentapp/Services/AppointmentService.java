@@ -344,6 +344,108 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
                 .collect(Collectors.toList());
     }
 
+    public List<AppointmentDto> getAppointmentsByUserAndDateRange(Long userId, LocalDateTime start, LocalDateTime end) {
+        if (userId == null || !userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("Valid userId must be provided.");
+        }
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        return appointmentRepository.findByUserIdAndDateTimeBetween(userId, start, end)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentDto> getAppointmentsByUserAndDateRangeAndStatus(Long userId, LocalDateTime start, LocalDateTime end, AppointmentStatus status) {
+        if (userId == null || !userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("Valid userId must be provided.");
+        }
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        return appointmentRepository.findByUserIdAndDateTimeBetweenAndStatus(userId, start, end, status)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentDto> getAppointmentsByUserAndDateRangeAndResult(Long userId, LocalDateTime start, LocalDateTime end, AppointmentResult result) {
+        if (userId == null || !userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("Valid userId must be provided.");
+        }
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        return appointmentRepository.findByUserIdAndDateTimeBetweenAndResult(userId, start, end, result)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentDto> getAppointmentsByDoctorAndDateRange(Long doctorId, LocalDateTime start, LocalDateTime end) {
+        if (doctorId == null || !doctorRepository.existsById(doctorId)) {
+            throw new IllegalArgumentException("Valid doctorId must be provided.");
+        }
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        return appointmentRepository.findByDoctorIdAndDateTimeBetween(doctorId, start, end)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentDto> getAppointmentsByDoctorAndDateRangeAndStatus(Long doctorId, LocalDateTime start, LocalDateTime end, AppointmentStatus status) {
+        if (doctorId == null || !doctorRepository.existsById(doctorId)) {
+            throw new IllegalArgumentException("Valid doctorId must be provided.");
+        }
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        return appointmentRepository.findByDoctorIdAndDateTimeBetweenAndStatus(doctorId, start, end, status)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentDto> getAppointmentsByDoctorAndDateRangeAndResult(Long doctorId, LocalDateTime start, LocalDateTime end, AppointmentResult result) {
+        if (doctorId == null || !doctorRepository.existsById(doctorId)) {
+            throw new IllegalArgumentException("Valid doctorId must be provided.");
+        }
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates must be provided.");
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        return appointmentRepository.findByDoctorIdAndDateTimeBetweenAndResult(doctorId, start, end, result)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
     public boolean isDoctorAvailable(Long doctorId, LocalDateTime appointmentDateTime) {
         int hour = appointmentDateTime.getHour();
         int minute = appointmentDateTime.getMinute();

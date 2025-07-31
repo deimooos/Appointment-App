@@ -183,6 +183,70 @@ public class AppointmentController extends BasicGenericController<AppointmentDto
         );
     }
 
+    @Operation(summary = "Get appointments by user and date range", description = "Returns appointments filtered by user ID and date range.")
+    @PostMapping("/by-user-date-range")
+    public List<AppointmentDto> getByUserAndDateRange(@Valid @RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByUserAndDateRange(
+                filterRequestDto.getUserId(),
+                filterRequestDto.getStart(),
+                filterRequestDto.getEnd()
+        );
+    }
+
+    @Operation(summary = "Get appointments by user, date range and status", description = "Returns appointments filtered by user ID, date range and status.")
+    @PostMapping("/by-user-date-range-status")
+    public List<AppointmentDto> getByUserAndDateRangeAndStatus(@Valid @RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByUserAndDateRangeAndStatus(
+                filterRequestDto.getUserId(),
+                filterRequestDto.getStart(),
+                filterRequestDto.getEnd(),
+                filterRequestDto.getStatus()
+        );
+    }
+
+    @Operation(summary = "Get appointments by user, date range and result", description = "Returns appointments filtered by user ID, date range and result.")
+    @PostMapping("/by-user-date-range-result")
+    public List<AppointmentDto> getByUserAndDateRangeAndResult(@Valid @RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByUserAndDateRangeAndResult(
+                filterRequestDto.getUserId(),
+                filterRequestDto.getStart(),
+                filterRequestDto.getEnd(),
+                filterRequestDto.getResult()
+        );
+    }
+
+    @Operation(summary = "Get appointments by doctor and date range", description = "Returns appointments filtered by doctor ID and date range.")
+    @PostMapping("/by-doctor-date-range")
+    public List<AppointmentDto> getByDoctorAndDateRange(@Valid @RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByDoctorAndDateRange(
+                filterRequestDto.getDoctorId(),
+                filterRequestDto.getStart(),
+                filterRequestDto.getEnd()
+        );
+    }
+
+    @Operation(summary = "Get appointments by doctor, date range and status", description = "Returns appointments filtered by doctor ID, date range and status.")
+    @PostMapping("/by-doctor-date-range-status")
+    public List<AppointmentDto> getByDoctorAndDateRangeAndStatus(@Valid @RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByDoctorAndDateRangeAndStatus(
+                filterRequestDto.getDoctorId(),
+                filterRequestDto.getStart(),
+                filterRequestDto.getEnd(),
+                filterRequestDto.getStatus()
+        );
+    }
+
+    @Operation(summary = "Get appointments by doctor, date range and result", description = "Returns appointments filtered by doctor ID, date range and result.")
+    @PostMapping("/by-doctor-date-range-result")
+    public List<AppointmentDto> getByDoctorAndDateRangeAndResult(@Valid @RequestBody FilterRequestDto filterRequestDto) {
+        return appointmentService.getAppointmentsByDoctorAndDateRangeAndResult(
+                filterRequestDto.getDoctorId(),
+                filterRequestDto.getStart(),
+                filterRequestDto.getEnd(),
+                filterRequestDto.getResult()
+        );
+    }
+
     @Operation(summary = "Check doctor's availability", description = "Checks if the doctor is available at the specified date and time.")
     @PostMapping("/check-availability")
     public ResponseEntity<String> checkDoctorAvailability(@Valid @RequestBody DoctorAvailabilityRequestDto request) {
