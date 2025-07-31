@@ -1,12 +1,15 @@
 package com.emrekirdim.appointmentapp.Controllers;
 
-import com.emrekirdim.appointmentapp.DTO.DoctorDto;
+import com.emrekirdim.appointmentapp.DTO.DoctorCreateDto;
+import com.emrekirdim.appointmentapp.DTO.DoctorResponseDto;
+import com.emrekirdim.appointmentapp.DTO.DoctorUpdateDto;
 import com.emrekirdim.appointmentapp.DTO.FilterRequestDto;
+import com.emrekirdim.appointmentapp.Services.AdvancedGenericService;
 import com.emrekirdim.appointmentapp.Services.DoctorService;
-import com.emrekirdim.appointmentapp.Services.BasicGenericService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,13 +18,13 @@ import java.util.List;
 @Tag(name = "Doctor Controller", description = "Endpoints for managing doctors")
 @RestController
 @RequestMapping("/api/doctors")
-public class DoctorController extends BasicGenericController<DoctorDto, Long> {
+public class DoctorController extends AdvancedGenericController<DoctorCreateDto, DoctorUpdateDto, DoctorResponseDto, Long> {
 
     @Autowired
     private DoctorService doctorService;
 
     @Override
-    protected BasicGenericService<DoctorDto, Long> getService() {
+    protected AdvancedGenericService<DoctorCreateDto, DoctorUpdateDto, DoctorResponseDto, Long> getService() {
         return doctorService;
     }
 
@@ -42,8 +45,8 @@ public class DoctorController extends BasicGenericController<DoctorDto, Long> {
 
     @Operation(summary = "Get doctors by specialty", description = "Returns doctors filtered by the given specialty ID.")
     @PostMapping("/by-specialty")
-    public List<DoctorDto> getDoctorsBySpecialty(@Valid @RequestBody FilterRequestDto filterRequestDto) {
-        return doctorService.getDoctorsBySpecialty(filterRequestDto.getSpecialtyId());
+    public ResponseEntity<List<DoctorResponseDto>> getDoctorsBySpecialty(@Valid @RequestBody FilterRequestDto filterRequestDto) {
+        List<DoctorResponseDto> doctors = doctorService.getDoctorsBySpecialty(filterRequestDto.getSpecialtyId());
+        return ResponseEntity.ok(doctors);
     }
-
 }

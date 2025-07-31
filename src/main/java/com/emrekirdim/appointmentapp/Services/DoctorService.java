@@ -1,6 +1,8 @@
 package com.emrekirdim.appointmentapp.Services;
 
-import com.emrekirdim.appointmentapp.DTO.DoctorDto;
+import com.emrekirdim.appointmentapp.DTO.DoctorCreateDto;
+import com.emrekirdim.appointmentapp.DTO.DoctorUpdateDto;
+import com.emrekirdim.appointmentapp.DTO.DoctorResponseDto;
 import com.emrekirdim.appointmentapp.Models.Doctor;
 import com.emrekirdim.appointmentapp.Models.Specialty;
 import com.emrekirdim.appointmentapp.Repositories.DoctorRepository;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class DoctorService implements BasicGenericService<DoctorDto, Long> {
+public class DoctorService implements AdvancedGenericService<DoctorCreateDto, DoctorUpdateDto, DoctorResponseDto, Long> {
 
     @Autowired
     private DoctorRepository doctorRepository;
@@ -26,73 +28,87 @@ public class DoctorService implements BasicGenericService<DoctorDto, Long> {
         }
     }
 
-    private Doctor mapToEntity(DoctorDto dto) {
+    private Doctor mapToEntity(DoctorCreateDto dto) {
         Specialty specialty = specialtyRepository.findById(dto.getSpecialtyId())
                 .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
         Doctor doctor = new Doctor();
-        doctor.setId(dto.getId());
         doctor.setTitle(dto.getTitle());
         doctor.setName(dto.getName());
         doctor.setSurname(dto.getSurname());
         doctor.setSpecialty(specialty);
-
         return doctor;
     }
 
-    private DoctorDto mapToDto(Doctor doctor) {
-        DoctorDto dto = new DoctorDto();
+    private DoctorResponseDto mapToResponse(Doctor doctor) {
+        DoctorResponseDto dto = new DoctorResponseDto();
         dto.setId(doctor.getId());
         dto.setTitle(doctor.getTitle());
         dto.setName(doctor.getName());
         dto.setSurname(doctor.getSurname());
         dto.setSpecialtyId(doctor.getSpecialty().getId());
-
         return dto;
     }
 
     @Override
-    public DoctorDto create(DoctorDto doctorDto) {
-        doctorRepository.findByNameAndSurname(doctorDto.getName(), doctorDto.getSurname())
-                .ifPresent(existing -> {
-                    throw new RuntimeException("A doctor with the same name and surname already exists.");
-                });
+    public DoctorResponseDto create(DoctorCreateDto doctorDto) {
+        if (doctorRepository.existsByTitleAndNameAndSurname(
+                doctorDto.getTitle(),
+                doctorDto.getName(),
+                doctorDto.getSurname())) {
+            throw new IllegalArgumentException("Doctor with this title, name and surname already exists.");
+        }
+
         Doctor doctor = mapToEntity(doctorDto);
         Doctor savedDoctor = doctorRepository.save(doctor);
-        return mapToDto(savedDoctor);
+        return mapToResponse(savedDoctor);
     }
 
     @Override
-    public List<DoctorDto> getAll() {
+    public List<DoctorResponseDto> getAll() {
         checkAnyDoctorExists();
         return doctorRepository.findAll()
                 .stream()
-                .map(this::mapToDto)
+                .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public DoctorDto update(DoctorDto doctorDto) {
-        Doctor doctor = mapToEntity(doctorDto);
+    public DoctorResponseDto update(DoctorUpdateDto doctorDto) {
+        if (doctorDto.getId() == null) {
+            throw new IllegalArgumentException("Doctor id must not be null.");
+        }
 
-        Doctor existingDoctor = doctorRepository.findById(doctor.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Doctor not found with id: " + doctor.getId()));
+        Doctor existingDoctor = doctorRepository.findById(doctorDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Doctor not found with id: " + doctorDto.getId()));
 
-        boolean existsTitleNameSurname = doctorRepository.existsByTitleAndNameAndSurname(
-                doctor.getTitle(),
-                doctor.getName(),
-                doctor.getSurname()
-        ) && (
-                !existingDoctor.getTitle().equals(doctor.getTitle()) ||
-                        !existingDoctor.getName().equals(doctor.getName()) ||
-                        !existingDoctor.getSurname().equals(doctor.getSurname())
+        if (doctorDto.getTitle() != null) {
+            existingDoctor.setTitle(doctorDto.getTitle());
+        }
+        if (doctorDto.getName() != null) {
+            existingDoctor.setName(doctorDto.getName());
+        }
+        if (doctorDto.getSurname() != null) {
+            existingDoctor.setSurname(doctorDto.getSurname());
+        }
+        if (doctorDto.getSpecialtyId() != null) {
+            Specialty specialty = specialtyRepository.findById(doctorDto.getSpecialtyId())
+                    .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
+            existingDoctor.setSpecialty(specialty);
+        }
+
+        boolean existsAnotherDoctor = doctorRepository.existsByTitleAndNameAndSurnameAndIdNot(
+                existingDoctor.getTitle(),
+                existingDoctor.getName(),
+                existingDoctor.getSurname(),
+                existingDoctor.getId()
         );
 
-        if (existsTitleNameSurname) {
+        if (existsAnotherDoctor) {
             throw new IllegalArgumentException("Doctor with this title, name and surname already exists.");
         }
 
-        Doctor updatedDoctor = doctorRepository.save(doctor);
-        return mapToDto(updatedDoctor);
+        Doctor savedDoctor = doctorRepository.save(existingDoctor);
+        return mapToResponse(savedDoctor);
     }
 
     @Override
@@ -105,10 +121,10 @@ public class DoctorService implements BasicGenericService<DoctorDto, Long> {
         doctorRepository.delete(doctor);
     }
 
-    public List<DoctorDto> getDoctorsBySpecialty(Long specialtyId) {
+    public List<DoctorResponseDto> getDoctorsBySpecialty(Long specialtyId) {
         return doctorRepository.findBySpecialtyId(specialtyId)
                 .stream()
-                .map(this::mapToDto)
+                .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 }

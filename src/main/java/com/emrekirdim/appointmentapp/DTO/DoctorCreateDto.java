@@ -1,6 +1,5 @@
 package com.emrekirdim.appointmentapp.DTO;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DoctorDto {
+public class DoctorCreateDto {
 
     private Long id;
 

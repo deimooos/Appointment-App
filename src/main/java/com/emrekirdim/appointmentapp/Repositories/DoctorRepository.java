@@ -15,4 +15,5 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Optional<Doctor> findByNameAndSurname(String name, String surname);
     boolean existsByTitleAndNameAndSurname(String title, String name, String surname);
     boolean existsBySpecialtyId(Long specialtyId);
+    boolean existsByTitleAndNameAndSurnameAndIdNot(String title, String name, String surname, Long id);
 }
