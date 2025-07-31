@@ -2,7 +2,9 @@ package com.emrekirdim.appointmentapp.Controllers;
 
 import com.emrekirdim.appointmentapp.DTO.AppointmentDto;
 import com.emrekirdim.appointmentapp.DTO.FilterRequestDto;
+import com.emrekirdim.appointmentapp.DTO.IdRequestDto;
 import com.emrekirdim.appointmentapp.Services.AppointmentService;
+import com.emrekirdim.appointmentapp.Services.GenericService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,50 +17,62 @@ import java.util.List;
 @Tag(name = "Appointment Controller", description = "Endpoints for managing appointments")
 @RestController
 @RequestMapping("/api/appointments")
-public class AppointmentController {
+public class AppointmentController extends GenericController<AppointmentDto, Long> {
 
-    @Autowired
-    private AppointmentService appointmentService;
+    private final AppointmentService appointmentService;
 
-    @Operation(summary = "Book an appointment", description = "Creates a new appointment booking with provided details.")
-    @PostMapping("/book")
-    public ResponseEntity<String> bookAppointment(@Valid @RequestBody AppointmentDto appointmentDto) {
-        appointmentService.bookAppointment(appointmentDto);
-        return ResponseEntity.ok("Appointment booked successfully.");
+    public AppointmentController(AppointmentService appointmentService) {
+        this.appointmentService = appointmentService;
     }
 
-    @Operation(summary = "Cancel an appointment", description = "Cancels an existing appointment by its ID.")
-    @DeleteMapping("/cancel")
-    public ResponseEntity<String> cancelAppointment(@RequestBody AppointmentDto appointmentDto) {
-        appointmentService.cancelAppointment(appointmentDto.getId());
-        return ResponseEntity.ok("Appointment cancelled successfully.");
+    @Override
+    protected GenericService<AppointmentDto, Long> getService() {
+        return appointmentService;
+    }
+
+    @Override
+    protected String getCreateMessage() {
+        return "Appointment booked successfully.";
+    }
+
+    @Override
+    protected String getUpdateMessage() {
+        return "Appointment updated successfully.";
+    }
+
+    @Override
+    protected String getDeleteMessage() {
+        return "Appointment cancelled successfully.";
     }
 
     @Operation(summary = "Mark an appointment as completed")
     @PutMapping("/complete")
-    public ResponseEntity<String> completeAppointment(@RequestBody AppointmentDto appointmentDto) {
-        appointmentService.completeAppointment(appointmentDto.getId());
+    public ResponseEntity<String> completeAppointment(@Valid @RequestBody IdRequestDto<Long> request) {
+        AppointmentDto dto = new AppointmentDto();
+        dto.setId(request.getId());
+        dto.setStatus(com.emrekirdim.appointmentapp.Models.AppointmentStatus.COMPLETED);
+        appointmentService.update(dto);
         return ResponseEntity.ok("Appointment marked as completed.");
     }
 
     @Operation(summary = "Mark appointment result as successful")
     @PutMapping("/successful")
-    public ResponseEntity<String> markAsSuccessful(@RequestBody AppointmentDto appointmentDto) {
-        appointmentService.successfulAppointment(appointmentDto.getId());
+    public ResponseEntity<String> markAsSuccessful(@Valid @RequestBody IdRequestDto<Long> request) {
+        AppointmentDto dto = new AppointmentDto();
+        dto.setId(request.getId());
+        dto.setResult(com.emrekirdim.appointmentapp.Models.AppointmentResult.SUCCESSFUL);
+        appointmentService.update(dto);
         return ResponseEntity.ok("Appointment result marked as successful.");
     }
 
     @Operation(summary = "Mark appointment result as unsuccessful")
     @PutMapping("/unsuccessful")
-    public ResponseEntity<String> markAsUnsuccessful(@RequestBody AppointmentDto appointmentDto) {
-        appointmentService.unsuccessfulAppointment(appointmentDto.getId());
+    public ResponseEntity<String> markAsUnsuccessful(@Valid @RequestBody IdRequestDto<Long> request) {
+        AppointmentDto dto = new AppointmentDto();
+        dto.setId(request.getId());
+        dto.setResult(com.emrekirdim.appointmentapp.Models.AppointmentResult.UNSUCCESSFUL);
+        appointmentService.update(dto);
         return ResponseEntity.ok("Appointment result marked as unsuccessful.");
-    }
-
-    @Operation(summary = "Retrieve all appointments", description = "Returns a list of all appointments.")
-    @GetMapping("/all")
-    public List<AppointmentDto> getAllAppointments() {
-        return appointmentService.getAllAppointments();
     }
 
     @Operation(summary = "Get appointments by user", description = "Returns appointments filtered by user ID.")

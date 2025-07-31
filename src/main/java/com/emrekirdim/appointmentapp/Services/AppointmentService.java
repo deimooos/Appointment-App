@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class AppointmentService {
+public class AppointmentService implements GenericService<AppointmentDto, Long>{
 
     @Autowired
     private AppointmentRepository appointmentRepository;
@@ -59,15 +59,14 @@ public class AppointmentService {
         return dto;
     }
 
-    public AppointmentDto bookAppointment(AppointmentDto dto) {
-
+    @Override
+    public AppointmentDto create(AppointmentDto dto) {
         if (!userRepository.existsAnyUser()) {
             throw new IllegalArgumentException("No users found in the system.");
         }
         if (!doctorRepository.existsAnyDoctor()) {
             throw new IllegalArgumentException("No doctors found in the system.");
         }
-
         if (dto.getDateTime().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Cannot book an appointment in the past.");
         }
@@ -75,19 +74,22 @@ public class AppointmentService {
         Appointment appointment = mapToEntity(dto);
 
         Optional<Appointment> existing = appointmentRepository.findByDoctorAndDateTimeAndStatus(
-                appointment.getDoctor(),
-                appointment.getDateTime(),
-                AppointmentStatus.SCHEDULED);
+                doctorRepository.findById(dto.getDoctorId())
+                        .orElseThrow(() -> new IllegalArgumentException("Doctor not found")),
+                dto.getDateTime(),
+                AppointmentStatus.SCHEDULED
+        );
 
         if (existing.isPresent()) {
             throw new IllegalArgumentException("This time slot is already taken for the selected doctor.");
         }
 
-        Appointment saved = appointmentRepository.save(appointment);
+        Appointment saved = appointmentRepository.save(mapToEntity(dto));
         return mapToDto(saved);
     }
 
-    public void cancelAppointment(Long id) {
+    @Override
+    public void delete(Long id) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found with id: " + id));
 
@@ -99,46 +101,41 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
     }
 
-    public AppointmentDto completeAppointment(Long appointmentId) {
-        Appointment appointment = appointmentRepository.findById(appointmentId)
+    @Override
+    public AppointmentDto update(AppointmentDto dto) {
+        Appointment appointment = appointmentRepository.findById(dto.getId())
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
-        if (appointment.getStatus() != AppointmentStatus.SCHEDULED) {
-            throw new IllegalArgumentException("Only scheduled appointments can be marked as completed.");
+        // Complete appointment mantığı
+        if (dto.getStatus() == AppointmentStatus.COMPLETED) {
+            if (appointment.getStatus() != AppointmentStatus.SCHEDULED) {
+                throw new IllegalArgumentException("Only scheduled appointments can be marked as completed.");
+            }
+            appointment.setStatus(AppointmentStatus.COMPLETED);
         }
 
-        appointment.setStatus(AppointmentStatus.COMPLETED);
+        // Successful appointment mantığı
+        if (dto.getResult() == AppointmentResult.SUCCESSFUL) {
+            if (appointment.getStatus() != AppointmentStatus.COMPLETED) {
+                throw new IllegalArgumentException("Only completed appointments can have a successful result.");
+            }
+            appointment.setResult(AppointmentResult.SUCCESSFUL);
+        }
+
+        // Unsuccessful appointment mantığı
+        if (dto.getResult() == AppointmentResult.UNSUCCESSFUL) {
+            if (appointment.getStatus() != AppointmentStatus.COMPLETED) {
+                throw new IllegalArgumentException("Only completed appointments can have an unsuccessful result.");
+            }
+            appointment.setResult(AppointmentResult.UNSUCCESSFUL);
+        }
+
         Appointment updated = appointmentRepository.save(appointment);
         return mapToDto(updated);
     }
 
-    public AppointmentDto successfulAppointment(Long appointmentId) {
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
-
-        if (appointment.getStatus() != AppointmentStatus.COMPLETED) {
-            throw new IllegalArgumentException("Only completed appointments can have a successful result.");
-        }
-
-        appointment.setResult(AppointmentResult.SUCCESSFUL);
-        Appointment updated = appointmentRepository.save(appointment);
-        return mapToDto(updated);
-    }
-
-    public AppointmentDto unsuccessfulAppointment(Long appointmentId) {
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
-
-        if (appointment.getStatus() != AppointmentStatus.COMPLETED) {
-            throw new IllegalArgumentException("Only completed appointments can have an unsuccessful result.");
-        }
-
-        appointment.setResult(AppointmentResult.UNSUCCESSFUL);
-        Appointment updated = appointmentRepository.save(appointment);
-        return mapToDto(updated);
-    }
-
-    public List<AppointmentDto> getAllAppointments() {
+    @Override
+    public List<AppointmentDto> getAll() {
         if (!userRepository.existsAnyUser()) {
             throw new IllegalArgumentException("No users found in the system.");
         }
