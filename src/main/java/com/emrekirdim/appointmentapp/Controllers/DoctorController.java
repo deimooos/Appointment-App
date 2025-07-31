@@ -2,13 +2,11 @@ package com.emrekirdim.appointmentapp.Controllers;
 
 import com.emrekirdim.appointmentapp.DTO.DoctorDto;
 import com.emrekirdim.appointmentapp.DTO.FilterRequestDto;
-import com.emrekirdim.appointmentapp.DTO.IdRequestDto;
 import com.emrekirdim.appointmentapp.Services.DoctorService;
-import com.emrekirdim.appointmentapp.Services.GenericService;
+import com.emrekirdim.appointmentapp.Services.BasicGenericService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,13 +15,13 @@ import java.util.List;
 @Tag(name = "Doctor Controller", description = "Endpoints for managing doctors")
 @RestController
 @RequestMapping("/api/doctors")
-public class DoctorController extends GenericController<DoctorDto, Long> {
+public class DoctorController extends BasicGenericController<DoctorDto, Long> {
 
     @Autowired
     private DoctorService doctorService;
 
     @Override
-    protected GenericService<DoctorDto, Long> getService() {
+    protected BasicGenericService<DoctorDto, Long> getService() {
         return doctorService;
     }
 

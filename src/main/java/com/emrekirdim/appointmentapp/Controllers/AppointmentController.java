@@ -4,10 +4,9 @@ import com.emrekirdim.appointmentapp.DTO.AppointmentDto;
 import com.emrekirdim.appointmentapp.DTO.FilterRequestDto;
 import com.emrekirdim.appointmentapp.DTO.IdRequestDto;
 import com.emrekirdim.appointmentapp.Services.AppointmentService;
-import com.emrekirdim.appointmentapp.Services.GenericService;
+import com.emrekirdim.appointmentapp.Services.BasicGenericService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +16,7 @@ import java.util.List;
 @Tag(name = "Appointment Controller", description = "Endpoints for managing appointments")
 @RestController
 @RequestMapping("/api/appointments")
-public class AppointmentController extends GenericController<AppointmentDto, Long> {
+public class AppointmentController extends BasicGenericController<AppointmentDto, Long> {
 
     private final AppointmentService appointmentService;
 
@@ -26,7 +25,7 @@ public class AppointmentController extends GenericController<AppointmentDto, Lon
     }
 
     @Override
-    protected GenericService<AppointmentDto, Long> getService() {
+    protected BasicGenericService<AppointmentDto, Long> getService() {
         return appointmentService;
     }
 

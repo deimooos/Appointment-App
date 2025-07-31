@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class AppointmentService implements GenericService<AppointmentDto, Long>{
+public class AppointmentService implements BasicGenericService<AppointmentDto, Long> {
 
     @Autowired
     private AppointmentRepository appointmentRepository;

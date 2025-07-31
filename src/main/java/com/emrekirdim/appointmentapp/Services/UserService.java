@@ -1,6 +1,8 @@
 package com.emrekirdim.appointmentapp.Services;
 
-import com.emrekirdim.appointmentapp.DTO.UserDto;
+import com.emrekirdim.appointmentapp.DTO.UserCreateDto;
+import com.emrekirdim.appointmentapp.DTO.UserResponseDto;
+import com.emrekirdim.appointmentapp.DTO.UserUpdateDto;
 import com.emrekirdim.appointmentapp.Models.User;
 import com.emrekirdim.appointmentapp.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService implements GenericService<UserDto, Long> {
+public class UserService implements AdvancedGenericService<UserCreateDto, UserUpdateDto, UserResponseDto, Long> {
 
     @Autowired
     private UserRepository userRepository;
@@ -21,7 +23,7 @@ public class UserService implements GenericService<UserDto, Long> {
         }
     }
 
-    private User mapToEntity(UserDto dto) {
+    private User mapToEntity(UserCreateDto dto) {
         User user = new User();
         user.setId(dto.getId());
         user.setName(dto.getName());
@@ -32,8 +34,8 @@ public class UserService implements GenericService<UserDto, Long> {
         return user;
     }
 
-    private UserDto mapToDto(User user) {
-        UserDto dto = new UserDto();
+    private UserResponseDto mapToResponse(User user) {
+        UserResponseDto dto = new UserResponseDto();
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setSurname(user.getSurname());
@@ -44,81 +46,82 @@ public class UserService implements GenericService<UserDto, Long> {
     }
 
     @Override
-    public UserDto create(UserDto userDto) {
+    public UserResponseDto create(UserCreateDto userDto) {
         User user = mapToEntity(userDto);
 
         if (!isValidTurkishId(user.getIdNum())) {
             throw new IllegalArgumentException("Invalid identification number.");
         }
 
-        if(userRepository.existsByNameAndSurname(user.getName(), user.getSurname())) {
+        if (userRepository.existsByNameAndSurname(user.getName(), user.getSurname())) {
             throw new IllegalArgumentException("User with this name and surname already exists.");
         }
-        if(userRepository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email is already registered.");
         }
-        if(userRepository.existsByPhone(user.getPhone())) {
+        if (userRepository.existsByPhone(user.getPhone())) {
             throw new IllegalArgumentException("Phone number is already registered.");
         }
-        if(userRepository.existsByIdNum(user.getIdNum())) {
+        if (userRepository.existsByIdNum(user.getIdNum())) {
             throw new IllegalArgumentException("Identification number is already registered.");
         }
 
         User savedUser = userRepository.save(user);
-        return mapToDto(savedUser);
+        return mapToResponse(savedUser);
     }
 
     @Override
-    public List<UserDto> getAll() {
+    public List<UserResponseDto> getAll() {
         checkAnyUserExists();
         return userRepository.findAll()
                 .stream()
-                .map(this::mapToDto)
+                .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public UserDto update(UserDto userDto) {
-        User user = mapToEntity(userDto);
+    public UserResponseDto update(UserUpdateDto userDto) {
 
         if (userDto.getId() == null) {
             throw new IllegalArgumentException("User id must not be null.");
         }
 
-        if (!isValidTurkishId(user.getIdNum())) {
-            throw new IllegalArgumentException("Invalid idetification number.");
+        User existingUser = userRepository.findById(userDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userDto.getId()));
+
+        if (userDto.getName() != null) {
+            existingUser.setName(userDto.getName());
+        }
+        if (userDto.getSurname() != null) {
+            existingUser.setSurname(userDto.getSurname());
+        }
+        if (userDto.getEmail() != null) {
+            if (userRepository.existsByEmail(userDto.getEmail()) &&
+                    !existingUser.getEmail().equals(userDto.getEmail())) {
+                throw new IllegalArgumentException("Email is already registered.");
+            }
+            existingUser.setEmail(userDto.getEmail());
+        }
+        if (userDto.getPhone() != null) {
+            if (userRepository.existsByPhone(userDto.getPhone()) &&
+                    !existingUser.getPhone().equals(userDto.getPhone())) {
+                throw new IllegalArgumentException("Phone number is already registered.");
+            }
+            existingUser.setPhone(userDto.getPhone());
+        }
+        if (userDto.getIdNum() != null) {
+            if (!isValidTurkishId(userDto.getIdNum())) {
+                throw new IllegalArgumentException("Invalid identification number.");
+            }
+            if (userRepository.existsByIdNum(userDto.getIdNum()) &&
+                    !existingUser.getIdNum().equals(userDto.getIdNum())) {
+                throw new IllegalArgumentException("Identification number is already registered.");
+            }
+            existingUser.setIdNum(userDto.getIdNum());
         }
 
-        User existingUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + user.getId()));
-
-        boolean existsNameSurname = userRepository.existsByNameAndSurname(user.getName(), user.getSurname())
-                && (!existingUser.getName().equals(user.getName()) || !existingUser.getSurname().equals(user.getSurname()));
-
-        boolean existsEmail = userRepository.existsByEmail(user.getEmail())
-                && !existingUser.getEmail().equals(user.getEmail());
-
-        boolean existsPhone = userRepository.existsByPhone(user.getPhone())
-                && !existingUser.getPhone().equals(user.getPhone());
-
-        boolean existsIdNum = userRepository.existsByIdNum(user.getIdNum())
-                && !existingUser.getIdNum().equals(user.getIdNum());
-
-        if(existsNameSurname) {
-            throw new IllegalArgumentException("User with this name and surname already exists.");
-        }
-        if(existsEmail) {
-            throw new IllegalArgumentException("Email is already registered.");
-        }
-        if(existsPhone) {
-            throw new IllegalArgumentException("Phone number is already registered.");
-        }
-        if(existsIdNum) {
-            throw new IllegalArgumentException("Identification number is already registered.");
-        }
-
-        User updatedUser = userRepository.save(user);
-        return mapToDto(updatedUser);
+        User updatedUser = userRepository.save(existingUser);
+        return mapToResponse(updatedUser);
     }
 
     @Override

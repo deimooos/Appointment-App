@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class DoctorService implements GenericService<DoctorDto, Long> {
+public class DoctorService implements BasicGenericService<DoctorDto, Long> {
 
     @Autowired
     private DoctorRepository doctorRepository;

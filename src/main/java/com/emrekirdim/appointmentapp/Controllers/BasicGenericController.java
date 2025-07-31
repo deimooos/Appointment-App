@@ -1,16 +1,16 @@
 package com.emrekirdim.appointmentapp.Controllers;
 
 import com.emrekirdim.appointmentapp.DTO.IdRequestDto;
-import com.emrekirdim.appointmentapp.Services.GenericService;
+import com.emrekirdim.appointmentapp.Services.BasicGenericService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
-public abstract class GenericController<T, ID> {
+public abstract class BasicGenericController<T, ID> {
 
-    protected abstract GenericService<T, ID> getService();
+    protected abstract BasicGenericService<T, ID> getService();
 
     protected abstract String getCreateMessage();
     protected abstract String getUpdateMessage();
