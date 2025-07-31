@@ -1,8 +1,6 @@
 package com.emrekirdim.appointmentapp.Controllers;
 
-import com.emrekirdim.appointmentapp.DTO.AppointmentDto;
-import com.emrekirdim.appointmentapp.DTO.FilterRequestDto;
-import com.emrekirdim.appointmentapp.DTO.IdRequestDto;
+import com.emrekirdim.appointmentapp.DTO.*;
 import com.emrekirdim.appointmentapp.Services.AppointmentService;
 import com.emrekirdim.appointmentapp.Services.BasicGenericService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "Appointment Controller", description = "Endpoints for managing appointments")
@@ -183,4 +182,30 @@ public class AppointmentController extends BasicGenericController<AppointmentDto
                 filterRequestDto.getResult()
         );
     }
+
+    @Operation(summary = "Check doctor's availability", description = "Checks if the doctor is available at the specified date and time.")
+    @PostMapping("/check-availability")
+    public ResponseEntity<String> checkDoctorAvailability(@Valid @RequestBody DoctorAvailabilityRequestDto request) {
+        boolean available = appointmentService.isDoctorAvailable(request.getDoctorId(), request.getDateTime());
+
+        if (available) {
+            return ResponseEntity.ok("The doctor is available at the selected time.");
+        } else {
+            return ResponseEntity.badRequest().body("The doctor is not available at the selected time.");
+        }
+    }
+
+    @Operation(
+            summary = "Get doctor's daily availability",
+            description = "Returns a list of available appointment times for a specific doctor on a given date."
+    )
+    @PostMapping("/daily-availability")
+    public ResponseEntity<List<LocalDateTime>> getDoctorDailyAvailability(
+            @Valid @RequestBody DoctorDailyAvailabilityRequestDto requestDto) {
+        List<LocalDateTime> availableSlots =
+                appointmentService.getAvailableTimeSlots(requestDto.getDoctorId(), requestDto.getDate());
+        return ResponseEntity.ok(availableSlots);
+    }
+
+
 }

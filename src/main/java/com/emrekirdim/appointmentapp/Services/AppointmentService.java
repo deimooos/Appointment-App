@@ -13,7 +13,9 @@ import com.emrekirdim.appointmentapp.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,32 +63,47 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
 
     @Override
     public AppointmentDto create(AppointmentDto dto) {
-        if (!userRepository.existsAnyUser()) {
-            throw new IllegalArgumentException("No users found in the system.");
-        }
-        if (!doctorRepository.existsAnyDoctor()) {
-            throw new IllegalArgumentException("No doctors found in the system.");
-        }
-        if (dto.getDateTime().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Cannot book an appointment in the past.");
+        if (dto.getUserId() == null || !userRepository.existsById(dto.getUserId())) {
+            throw new IllegalArgumentException("A valid user must be selected before booking an appointment.");
         }
 
-        Appointment appointment = mapToEntity(dto);
+        Doctor doctor = doctorRepository.findById(dto.getDoctorId())
+                .orElseThrow(() -> new IllegalArgumentException("A valid doctor must be selected before booking an appointment."));
+
+        if (doctor.getSpecialty() == null) {
+            throw new IllegalArgumentException("The selected doctor does not have an assigned specialty. Please choose another doctor.");
+        }
+
+        if (dto.getDateTime() == null) {
+            throw new IllegalArgumentException("Appointment date and time must be provided.");
+        }
+
+        if (dto.getDateTime().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("You cannot book an appointment in the past.");
+        }
+
+        int hour = dto.getDateTime().getHour();
+        int minute = dto.getDateTime().getMinute();
+
+        if (hour < 8 || hour >= 17 || hour == 12 || minute != 0) {
+            throw new IllegalArgumentException("Appointments can only be booked on the hour between 08:00-12:00 and 13:00-17:00.");
+        }
 
         Optional<Appointment> existing = appointmentRepository.findByDoctorAndDateTimeAndStatus(
-                doctorRepository.findById(dto.getDoctorId())
-                        .orElseThrow(() -> new IllegalArgumentException("Doctor not found")),
+                doctor,
                 dto.getDateTime(),
                 AppointmentStatus.SCHEDULED
         );
 
         if (existing.isPresent()) {
-            throw new IllegalArgumentException("This time slot is already taken for the selected doctor.");
+            throw new IllegalArgumentException("This time slot is already booked for the selected doctor. Please choose another time.");
         }
 
-        Appointment saved = appointmentRepository.save(mapToEntity(dto));
+        Appointment appointment = mapToEntity(dto);
+        Appointment saved = appointmentRepository.save(appointment);
         return mapToDto(saved);
     }
+
 
     @Override
     public void delete(Long id) {
@@ -106,7 +123,6 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
         Appointment appointment = appointmentRepository.findById(dto.getId())
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
-        // Complete appointment mantığı
         if (dto.getStatus() == AppointmentStatus.COMPLETED) {
             if (appointment.getStatus() != AppointmentStatus.SCHEDULED) {
                 throw new IllegalArgumentException("Only scheduled appointments can be marked as completed.");
@@ -114,7 +130,6 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
             appointment.setStatus(AppointmentStatus.COMPLETED);
         }
 
-        // Successful appointment mantığı
         if (dto.getResult() == AppointmentResult.SUCCESSFUL) {
             if (appointment.getStatus() != AppointmentStatus.COMPLETED) {
                 throw new IllegalArgumentException("Only completed appointments can have a successful result.");
@@ -122,7 +137,6 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
             appointment.setResult(AppointmentResult.SUCCESSFUL);
         }
 
-        // Unsuccessful appointment mantığı
         if (dto.getResult() == AppointmentResult.UNSUCCESSFUL) {
             if (appointment.getStatus() != AppointmentStatus.COMPLETED) {
                 throw new IllegalArgumentException("Only completed appointments can have an unsuccessful result.");
@@ -318,5 +332,61 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
+
+    public boolean isDoctorAvailable(Long doctorId, LocalDateTime appointmentDateTime) {
+        int hour = appointmentDateTime.getHour();
+        int minute = appointmentDateTime.getMinute();
+        if (hour < 8 || hour >= 17) {
+            return false;
+        }
+        if (hour == 12) {
+            return false;
+        }
+
+        if (minute != 0) {
+            return false;
+        }
+
+        Optional<Appointment> existing = appointmentRepository.findByDoctorAndDateTimeAndStatus(
+                doctorRepository.findById(doctorId)
+                        .orElseThrow(() -> new IllegalArgumentException("Doctor not found")),
+                appointmentDateTime,
+                AppointmentStatus.SCHEDULED
+        );
+
+        return !existing.isPresent();
+
+    }
+
+    public List<LocalDateTime> getAvailableTimeSlots(Long doctorId, LocalDate date) {
+        List<LocalDateTime> availableSlots = new ArrayList<>();
+
+        for (int hour = 8; hour < 17; hour++) {
+            if (hour == 12) continue;
+
+            LocalDateTime slot = date.atTime(hour, 0);
+
+            boolean isTaken = appointmentRepository
+                    .findByDoctorAndDateTimeAndStatus(
+                            doctorRepository.findById(doctorId)
+                                    .orElseThrow(() -> new IllegalArgumentException("Doctor not found")),
+                            slot,
+                            AppointmentStatus.SCHEDULED
+                    )
+                    .isPresent();
+
+            if (!isTaken && slot.isAfter(LocalDateTime.now())) {
+                availableSlots.add(slot);
+            }
+        }
+
+        if (availableSlots.isEmpty()) {
+            throw new IllegalArgumentException("No available time slots for the selected doctor on this date.");
+        }
+
+        return availableSlots;
+    }
+
+
 
 }

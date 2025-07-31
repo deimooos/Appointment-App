@@ -122,6 +122,10 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
     }
 
     public List<DoctorResponseDto> getDoctorsBySpecialty(Long specialtyId) {
+        boolean specialtyExists = specialtyRepository.existsById(specialtyId);
+        if (!specialtyExists) {
+            throw new IllegalArgumentException("Selected specialty does not exist.");
+        }
         return doctorRepository.findBySpecialtyId(specialtyId)
                 .stream()
                 .map(this::mapToResponse)
