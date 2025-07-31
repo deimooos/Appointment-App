@@ -3,6 +3,7 @@ package com.emrekirdim.appointmentapp.Controllers;
 import com.emrekirdim.appointmentapp.DTO.*;
 import com.emrekirdim.appointmentapp.Services.AppointmentService;
 import com.emrekirdim.appointmentapp.Services.BasicGenericService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -35,12 +36,19 @@ public class AppointmentController extends BasicGenericController<AppointmentDto
 
     @Override
     protected String getUpdateMessage() {
-        return "Appointment updated successfully.";
+        return "Direct update is disabled. Use /complete, /successful, or /unsuccessful endpoints.";
     }
 
     @Override
     protected String getDeleteMessage() {
         return "Appointment cancelled successfully.";
+    }
+
+    @Override
+    @Hidden
+    @PutMapping("/update")
+    public ResponseEntity<String> update(@Valid @RequestBody AppointmentDto dto) {
+        throw new UnsupportedOperationException("Direct update is not supported for appointments. Use /complete, /successful, or /unsuccessful endpoints.");
     }
 
     @Operation(summary = "Mark an appointment as completed")
