@@ -100,6 +100,16 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
             throw new IllegalArgumentException("This time slot is already booked for the selected doctor. Please choose another time.");
         }
 
+        Optional<Appointment> existingUser = appointmentRepository.findByUserIdAndDateTimeAndStatus(
+                dto.getUserId(),
+                dto.getDateTime(),
+                AppointmentStatus.SCHEDULED
+        );
+
+        if (existingUser.isPresent()) {
+            throw new IllegalArgumentException("You already have an appointment at this time with another doctor. Please choose a different time.");
+        }
+
         Appointment appointment = mapToEntity(dto);
         Appointment saved = appointmentRepository.save(appointment);
         return mapToDto(saved);
