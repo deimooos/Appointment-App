@@ -13,19 +13,19 @@
 
 ---
 
-## 1. Project Title
+## Project Title
 **Appointment Management System**
 
 ---
 
-## 2. Introduction
+## Introduction
 The aim of this project is to develop a backend system for managing doctor appointment scheduling.  
 It allows patients to book appointments, doctors to view and manage their schedules, and ensures no time conflicts occur between appointments.  
 The project is designed as a learning exercise for internship purposes, focusing on clean architecture and Spring Boot development.
 
 ---
 
-## 3. Technologies Used
+## Technologies Used
 - **Java 8 (1.8_251)**  
 - **Spring Boot 2.7.18**  
 - **PostgreSQL 17**  
@@ -34,7 +34,7 @@ The project is designed as a learning exercise for internship purposes, focusing
 
 ---
 
-## 4. Launch
+## Launch
 
 To run the project locally, follow these steps:
 
@@ -60,7 +60,7 @@ The API documentation (Swagger UI) is available at:
    ```
 ---
 
-## 5. Illustrations
+## Illustrations
 
 - API endpoints are documented with Swagger UI, accessible at:  
 `http://localhost:8080/swagger-ui.html`
@@ -68,7 +68,7 @@ The API documentation (Swagger UI) is available at:
 
 ---
 
-## 6. Scope of Functions
+## Scope of Functions
 
 - User management (registration, retrieval)
 - Doctor management (creation, retrieval)
@@ -81,7 +81,7 @@ The API documentation (Swagger UI) is available at:
 
 ---
 
-## 7. Use Examples
+## Use Examples
 
 - Create a new appointment: POST `/api/appointments/create`  
 - Get all appointments: GET `/api/appointments/all`  
@@ -93,7 +93,7 @@ The API documentation (Swagger UI) is available at:
 
 ---
 
-## 8. Project Status
+## Project Status
 
 - The project is under active development.
 - Core CRUD operations and filtering are implemented.
@@ -102,7 +102,7 @@ The API documentation (Swagger UI) is available at:
 
 ---
 
-## 9. Sources
+## Sources
 
 - Spring Boot official documentation: https://spring.io/projects/spring-boot
 - Another Spring Boot documentation: https://www.ibm.com/think/topics/java-spring-boot
