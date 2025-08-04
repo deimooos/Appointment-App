@@ -104,10 +104,15 @@ The API documentation (Swagger UI) is available at:
 
 ## 9. Sources
 
-- Spring Boot official documentation: https://spring.io/projects/spring-boot  
+- Spring Boot official documentation: https://spring.io/projects/spring-boot
+- Another Spring Boot documentation: https://www.ibm.com/think/topics/java-spring-boot
 - PostgreSQL official website: https://www.postgresql.org/  
-- Swagger UI for API documentation  
-- Java 8 features and best practices  
+- Java 8 documentation: https://docs.oracle.com/javase/8/docs/
+- Maven: https://maven.apache.org/
+- Spring Data JPA: https://spring.io/projects/spring-data-jpa
+- Hibernate Validator: https://hibernate.org/validator/
+- Stack Overflow: https://stackoverflow.com/
+- Swagger OpenAPI documentation: https://swagger.io/docs/
 - Mentorship and tutorials during the internship period
 
 ---
