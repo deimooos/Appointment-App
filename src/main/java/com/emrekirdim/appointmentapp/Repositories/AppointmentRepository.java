@@ -5,10 +5,13 @@ import com.emrekirdim.appointmentapp.Models.Doctor;
 import com.emrekirdim.appointmentapp.Models.AppointmentStatus;
 import com.emrekirdim.appointmentapp.Models.AppointmentResult;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
     Optional<Appointment> findByDoctorAndDateTimeAndStatus(Doctor doctor, LocalDateTime dateTime, AppointmentStatus status);
     Optional<Appointment> findByUserIdAndDateTimeAndStatus(Long userId, LocalDateTime dateTime, AppointmentStatus status);
