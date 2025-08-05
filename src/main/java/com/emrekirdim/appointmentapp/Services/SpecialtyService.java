@@ -2,6 +2,7 @@ package com.emrekirdim.appointmentapp.Services;
 
 import com.emrekirdim.appointmentapp.DTO.SpecialtyDto;
 import com.emrekirdim.appointmentapp.Models.Specialty;
+import com.emrekirdim.appointmentapp.Repositories.DoctorRepository;
 import com.emrekirdim.appointmentapp.Repositories.SpecialtyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class SpecialtyService implements BasicGenericService<SpecialtyDto, Long>
     private SpecialtyRepository specialtyRepository;
 
     @Autowired
-    private DoctorService doctorService;
+    private DoctorRepository doctorRepository;
 
     private Specialty mapToEntity(SpecialtyDto dto) {
         Specialty specialty = new Specialty();
@@ -74,7 +75,7 @@ public class SpecialtyService implements BasicGenericService<SpecialtyDto, Long>
         }
         Specialty specialty = specialtyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Specialty not found with id: " + id));
-        boolean hasDoctors = doctorService.existsBySpecialtyId(id);
+        boolean hasDoctors = doctorRepository.existsBySpecialtyId(id);
         if (hasDoctors) {
             throw new IllegalStateException("Cannot delete specialty. First delete doctors under this specialty.");
         }

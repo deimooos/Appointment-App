@@ -11,6 +11,12 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   app:
     build: .
@@ -22,7 +28,8 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 1
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   pgdata:
