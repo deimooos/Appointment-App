@@ -44,10 +44,12 @@ public class SwaggerConfig {
                                 .description("Operations for creating, updating, listing, and deleting doctors, as well as retrieving doctors by specialty."),
                         new Tag().name("Patient - User Management")
                                 .description("Operations for registering, updating, and managing patient accounts."),
-                        new Tag().name("Patient - Appointment Management")
-                                .description("Operations for booking, canceling, and viewing patient appointments."),
-                        new Tag().name("Doctor - Appointment Processing")
-                                .description("Operations for doctors to view, complete, and record results of their appointments.")
+                        new Tag().name("User Appointment Management")
+                                .description("Endpoints for patients to manage their appointments: booking, cancelling, and viewing."),
+                        new Tag().name("Doctor Appointment Management")
+                                .description("Endpoints for doctors to manage their appointments: viewing, completing, and recording results."),
+                        new Tag().name("Common Appointment Management")
+                                .description("Endpoints shared between patients and doctors, e.g. checking availability.")
                 ));
     }
 }
