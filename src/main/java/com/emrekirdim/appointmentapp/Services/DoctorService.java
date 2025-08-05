@@ -6,7 +6,6 @@ import com.emrekirdim.appointmentapp.DTO.DoctorResponseDto;
 import com.emrekirdim.appointmentapp.Models.Doctor;
 import com.emrekirdim.appointmentapp.Models.Specialty;
 import com.emrekirdim.appointmentapp.Repositories.DoctorRepository;
-import com.emrekirdim.appointmentapp.Repositories.SpecialtyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,17 +19,20 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
     private DoctorRepository doctorRepository;
 
     @Autowired
-    private SpecialtyRepository specialtyRepository;
+    private SpecialtyService specialtyService;
 
-    public void checkAnyDoctorExists() throws IllegalArgumentException{
+    public void checkAnyDoctorExists() throws IllegalArgumentException {
         if (!doctorRepository.existsAnyDoctor()) {
             throw new IllegalArgumentException("No doctors found in the system.");
         }
     }
 
-    private Doctor mapToEntity(DoctorCreateDto dto) throws IllegalArgumentException{
-        Specialty specialty = specialtyRepository.findById(dto.getSpecialtyId())
-                .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
+    private Doctor mapToEntity(DoctorCreateDto dto) throws IllegalArgumentException {
+        if (!specialtyService.existsById(dto.getSpecialtyId())) {
+            throw new IllegalArgumentException("Specialty not found with id: " + dto.getSpecialtyId());
+        }
+        Specialty specialty = specialtyService.getEntityById(dto.getSpecialtyId());
+
         Doctor doctor = new Doctor();
         doctor.setTitle(dto.getTitle());
         doctor.setName(dto.getName());
@@ -50,7 +52,7 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
     }
 
     @Override
-    public DoctorResponseDto create(DoctorCreateDto doctorDto) throws IllegalArgumentException{
+    public DoctorResponseDto create(DoctorCreateDto doctorDto) throws IllegalArgumentException {
         if (doctorRepository.existsByTitleAndNameAndSurname(
                 doctorDto.getTitle(),
                 doctorDto.getName(),
@@ -73,7 +75,7 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
     }
 
     @Override
-    public DoctorResponseDto update(DoctorUpdateDto doctorDto) throws IllegalArgumentException{
+    public DoctorResponseDto update(DoctorUpdateDto doctorDto) throws IllegalArgumentException {
         if (doctorDto.getId() == null) {
             throw new IllegalArgumentException("Doctor id must not be null.");
         }
@@ -91,8 +93,10 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
             existingDoctor.setSurname(doctorDto.getSurname());
         }
         if (doctorDto.getSpecialtyId() != null) {
-            Specialty specialty = specialtyRepository.findById(doctorDto.getSpecialtyId())
-                    .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
+            if (!specialtyService.existsById(doctorDto.getSpecialtyId())) {
+                throw new IllegalArgumentException("Specialty not found with id: " + doctorDto.getSpecialtyId());
+            }
+            Specialty specialty = specialtyService.getEntityById(doctorDto.getSpecialtyId());
             existingDoctor.setSpecialty(specialty);
         }
 
@@ -112,7 +116,7 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
     }
 
     @Override
-    public void delete(Long id) throws IllegalArgumentException{
+    public void delete(Long id) throws IllegalArgumentException {
         if (id == null) {
             throw new IllegalArgumentException("Doctor id must not be null.");
         }
@@ -121,9 +125,8 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
         doctorRepository.delete(doctor);
     }
 
-    public List<DoctorResponseDto> getDoctorsBySpecialty(Long specialtyId) throws IllegalArgumentException{
-        boolean specialtyExists = specialtyRepository.existsById(specialtyId);
-        if (!specialtyExists) {
+    public List<DoctorResponseDto> getDoctorsBySpecialty(Long specialtyId) throws IllegalArgumentException {
+        if (!specialtyService.existsById(specialtyId)) {
             throw new IllegalArgumentException("Selected specialty does not exist.");
         }
         return doctorRepository.findBySpecialtyId(specialtyId)
@@ -131,4 +134,32 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
+
+    public boolean existsBySpecialtyId(Long specialtyId) {
+        if (specialtyId == null) {
+            throw new IllegalArgumentException("Specialty id must not be null.");
+        }
+        return doctorRepository.existsBySpecialtyId(specialtyId);
+    }
+
+    public Doctor getEntityById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Doctor id must not be null.");
+        }
+        return doctorRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Doctor not found with id: " + id));
+    }
+
+    public boolean existsById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Doctor id must not be null.");
+        }
+        return doctorRepository.existsById(id);
+    }
+
+    public boolean existsAnyDoctor() {
+        return doctorRepository.count() > 0;
+    }
+
+
 }

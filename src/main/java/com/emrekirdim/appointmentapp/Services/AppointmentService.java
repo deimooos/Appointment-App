@@ -9,8 +9,6 @@ import com.emrekirdim.appointmentapp.Models.Enums.AppointmentStatus;
 import com.emrekirdim.appointmentapp.Models.Doctor;
 import com.emrekirdim.appointmentapp.Models.User;
 import com.emrekirdim.appointmentapp.Repositories.AppointmentRepository;
-import com.emrekirdim.appointmentapp.Repositories.DoctorRepository;
-import com.emrekirdim.appointmentapp.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,19 +26,17 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     private AppointmentRepository appointmentRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
-    private DoctorRepository doctorRepository;
+    private DoctorService doctorService;
 
     private Appointment mapToEntity(AppointmentDto dto) throws IllegalArgumentException{
         Appointment appointment = new Appointment();
         appointment.setId(dto.getId());
 
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Doctor doctor = doctorRepository.findById(dto.getDoctorId())
-                .orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
+        User user = userService.getEntityById(dto.getUserId());
+        Doctor doctor = doctorService.getEntityById(dto.getDoctorId());
 
         appointment.setUser(user);
         appointment.setDoctor(doctor);
@@ -64,12 +60,11 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
 
     @Override
     public AppointmentDto create(AppointmentDto dto) throws IllegalArgumentException{
-        if (dto.getUserId() == null || !userRepository.existsById(dto.getUserId())) {
+        if (dto.getUserId() == null || !userService.existsById(dto.getUserId())) {
             throw new IllegalArgumentException("A valid user must be selected before booking an appointment.");
         }
 
-        Doctor doctor = doctorRepository.findById(dto.getDoctorId())
-                .orElseThrow(() -> new IllegalArgumentException("A valid doctor must be selected before booking an appointment."));
+        Doctor doctor = doctorService.getEntityById(dto.getDoctorId());
 
         if (doctor.getSpecialty() == null) {
             throw new IllegalArgumentException("The selected doctor does not have an assigned specialty. Please choose another doctor.");
@@ -161,10 +156,10 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
 
     @Override
     public List<AppointmentDto> getAll() throws IllegalArgumentException{
-        if (!userRepository.existsAnyUser()) {
+        if (!userService.existsAnyUser()) {
             throw new IllegalArgumentException("No users found in the system.");
         }
-        if (!doctorRepository.existsAnyDoctor()) {
+        if (!doctorService.existsAnyDoctor()) {
             throw new IllegalArgumentException("No doctors found in the system.");
         }
         return appointmentRepository.findAll()
@@ -174,7 +169,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByUser(Long userId) throws IllegalArgumentException{
-        if (!userRepository.existsAnyUser()) {
+        if (!userService.existsAnyUser()) {
             throw new IllegalArgumentException("No users found in the system.");
         }
         return appointmentRepository.findByUserId(userId)
@@ -184,7 +179,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByDoctor(Long doctorId) throws IllegalArgumentException{
-        if (!doctorRepository.existsAnyDoctor()) {
+        if (!doctorService.existsAnyDoctor()) {
             throw new IllegalArgumentException("No doctors found in the system.");
         }
         return appointmentRepository.findByDoctorId(doctorId)
@@ -208,7 +203,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByUserAndStatus(FilterRequestDto filter) throws IllegalArgumentException{
-        if (!userRepository.existsAnyUser()) {
+        if (!userService.existsAnyUser()) {
             throw new IllegalArgumentException("No users found in the system.");
         }
         return appointmentRepository.findByUserIdAndStatus(filter.getUserId(), filter.getStatus())
@@ -218,7 +213,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByDoctorAndStatus(FilterRequestDto filter) throws IllegalArgumentException{
-        if (!doctorRepository.existsAnyDoctor()) {
+        if (!doctorService.existsAnyDoctor()) {
             throw new IllegalArgumentException("No doctors found in the system.");
         }
         return appointmentRepository.findByDoctorIdAndStatus(filter.getDoctorId(), filter.getStatus())
@@ -245,7 +240,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByUserAndResult(FilterRequestDto filter) throws IllegalArgumentException{
-        if (!userRepository.existsAnyUser()) {
+        if (!userService.existsAnyUser()) {
             throw new IllegalArgumentException("No users found in the system.");
         }
         return appointmentRepository.findByUserIdAndResult(filter.getUserId(), filter.getResult())
@@ -255,7 +250,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByDoctorAndResult(FilterRequestDto filter) throws IllegalArgumentException{
-        if (!doctorRepository.existsAnyDoctor()) {
+        if (!doctorService.existsAnyDoctor()) {
             throw new IllegalArgumentException("No doctors found in the system.");
         }
         return appointmentRepository.findByDoctorIdAndResult(filter.getDoctorId(), filter.getResult())
@@ -345,7 +340,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByUserAndDateRange(Long userId, LocalDateTime start, LocalDateTime end) throws IllegalArgumentException{
-        if (userId == null || !userRepository.existsById(userId)) {
+        if (userId == null || !userService.existsById(userId)) {
             throw new IllegalArgumentException("Valid userId must be provided.");
         }
         if (start == null || end == null) {
@@ -362,7 +357,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByUserAndDateRangeAndStatus(Long userId, LocalDateTime start, LocalDateTime end, AppointmentStatus status) throws IllegalArgumentException{
-        if (userId == null || !userRepository.existsById(userId)) {
+        if (userId == null || !userService.existsById(userId)) {
             throw new IllegalArgumentException("Valid userId must be provided.");
         }
         if (start == null || end == null) {
@@ -379,7 +374,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByUserAndDateRangeAndResult(Long userId, LocalDateTime start, LocalDateTime end, AppointmentResult result) throws IllegalArgumentException{
-        if (userId == null || !userRepository.existsById(userId)) {
+        if (userId == null || !userService.existsById(userId)) {
             throw new IllegalArgumentException("Valid userId must be provided.");
         }
         if (start == null || end == null) {
@@ -396,7 +391,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByDoctorAndDateRange(Long doctorId, LocalDateTime start, LocalDateTime end) throws IllegalArgumentException{
-        if (doctorId == null || !doctorRepository.existsById(doctorId)) {
+        if (doctorId == null || !doctorService.existsById(doctorId)) {
             throw new IllegalArgumentException("Valid doctorId must be provided.");
         }
         if (start == null || end == null) {
@@ -413,7 +408,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByDoctorAndDateRangeAndStatus(Long doctorId, LocalDateTime start, LocalDateTime end, AppointmentStatus status) throws IllegalArgumentException{
-        if (doctorId == null || !doctorRepository.existsById(doctorId)) {
+        if (doctorId == null || !doctorService.existsById(doctorId)) {
             throw new IllegalArgumentException("Valid doctorId must be provided.");
         }
         if (start == null || end == null) {
@@ -430,7 +425,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByDoctorAndDateRangeAndResult(Long doctorId, LocalDateTime start, LocalDateTime end, AppointmentResult result) throws IllegalArgumentException{
-        if (doctorId == null || !doctorRepository.existsById(doctorId)) {
+        if (doctorId == null || !doctorService.existsById(doctorId)) {
             throw new IllegalArgumentException("Valid doctorId must be provided.");
         }
         if (start == null || end == null) {
@@ -447,6 +442,8 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public boolean isDoctorAvailable(Long doctorId, LocalDateTime appointmentDateTime) throws IllegalArgumentException{
+        Doctor doctor = doctorService.getEntityById(doctorId);
+
         int hour = appointmentDateTime.getHour();
         int minute = appointmentDateTime.getMinute();
         if (hour < 8 || hour >= 17) {
@@ -461,8 +458,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
         }
 
         Optional<Appointment> existing = appointmentRepository.findByDoctorAndDateTimeAndStatus(
-                doctorRepository.findById(doctorId)
-                        .orElseThrow(() -> new IllegalArgumentException("Doctor not found")),
+                doctor,
                 appointmentDateTime,
                 AppointmentStatus.SCHEDULED
         );
@@ -472,6 +468,8 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<LocalDateTime> getAvailableTimeSlots(Long doctorId, LocalDate date) throws IllegalArgumentException{
+        Doctor doctor = doctorService.getEntityById(doctorId);
+
         List<LocalDateTime> availableSlots = new ArrayList<>();
 
         for (int hour = 8; hour < 17; hour++) {
@@ -481,8 +479,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
 
             boolean isTaken = appointmentRepository
                     .findByDoctorAndDateTimeAndStatus(
-                            doctorRepository.findById(doctorId)
-                                    .orElseThrow(() -> new IllegalArgumentException("Doctor not found")),
+                            doctor,
                             slot,
                             AppointmentStatus.SCHEDULED
                     )
@@ -501,7 +498,7 @@ public class AppointmentService implements BasicGenericService<AppointmentDto, L
     }
 
     public List<AppointmentDto> getAppointmentsByUserAndTimeType(AppointmentHistoryFilterDto filter) throws IllegalArgumentException{
-        if (filter.getUserId() == null || !userRepository.existsById(filter.getUserId())) {
+        if (filter.getUserId() == null || !userService.existsById(filter.getUserId())) {
             throw new IllegalArgumentException("Valid userId must be provided.");
         }
 

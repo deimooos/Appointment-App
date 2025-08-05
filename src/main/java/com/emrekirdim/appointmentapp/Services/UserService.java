@@ -145,4 +145,27 @@ public class UserService implements AdvancedGenericService<UserCreateDto, UserUp
         int digit11 = total % 10;
         return digit11 == digits[10];
     }
+
+    public User getEntityById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("User id must not be null.");
+        }
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+    }
+
+    public boolean existsById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("User id must not be null.");
+        }
+        return userRepository.existsById(id);
+    }
+
+    public boolean existsAnyUser() {
+        return userRepository.count() > 0;
+    }
+
+
+
+
 }
