@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "doctors", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"name", "surname"})
-})
+@Table(name = "doctors")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
