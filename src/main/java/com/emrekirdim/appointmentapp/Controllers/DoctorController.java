@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@Tag(name = "Doctor Controller", description = "Endpoints for managing doctors")
+@Tag(name = "Admin - Doctor Management", description = "Endpoints for administrators to register, update, and manage doctors. Also includes retrieving doctors by specialty.")
 @RestController
 @RequestMapping("/api/doctors")
 public class DoctorController extends AdvancedGenericController<DoctorCreateDto, DoctorUpdateDto, DoctorResponseDto, Long> {
@@ -43,7 +43,7 @@ public class DoctorController extends AdvancedGenericController<DoctorCreateDto,
         return "Doctor deleted successfully.";
     }
 
-    @Operation(summary = "Get doctors by specialty", description = "Returns doctors filtered by the given specialty ID.")
+    @Operation(summary = "Retrieve doctors by specialty", description = "Returns a list of doctors filtered by the specified specialty ID. A valid specialty must exist before adding doctors.")
     @PostMapping("/by-specialty")
     public ResponseEntity<List<DoctorResponseDto>> getDoctorsBySpecialty(@Valid @RequestBody FilterRequestDto filterRequestDto) {
         List<DoctorResponseDto> doctors = doctorService.getDoctorsBySpecialty(filterRequestDto.getSpecialtyId());

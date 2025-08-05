@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Tag(name = "Specialty Controller", description = "Endpoints for managing medical specialties")
+@Tag(name = "Admin - Specialty Management", description = "Endpoints for administrators to create, update, and manage medical specialties. Required before adding doctors.")
 @RestController
 @RequestMapping("/api/specialties")
 public class SpecialtyController extends BasicGenericController<SpecialtyDto, Long> {
@@ -39,7 +39,7 @@ public class SpecialtyController extends BasicGenericController<SpecialtyDto, Lo
         return "Specialty deleted successfully.";
     }
 
-    @Operation(summary = "Get a specialty by ID", description = "Retrieves a specialty using its ID.")
+    @Operation(summary = "Retrieve specialty by ID", description = "Get detailed information about a medical specialty by providing its unique ID.")
     @PostMapping("/get-by-id")
     public SpecialtyDto getById(@Valid @RequestBody IdRequestDto<Long> request) {
         return specialtyService.getById(request.getId());
