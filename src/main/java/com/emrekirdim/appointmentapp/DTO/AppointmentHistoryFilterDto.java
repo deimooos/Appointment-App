@@ -4,7 +4,6 @@ import com.emrekirdim.appointmentapp.Models.AppointmentStatus;
 import com.emrekirdim.appointmentapp.Models.AppointmentResult;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 
 @Data
 public class AppointmentHistoryFilterDto {

@@ -2,10 +2,8 @@ package com.emrekirdim.appointmentapp.Repositories;
 
 import com.emrekirdim.appointmentapp.Models.Appointment;
 import com.emrekirdim.appointmentapp.Models.Doctor;
-import com.emrekirdim.appointmentapp.Models.User;
 import com.emrekirdim.appointmentapp.Models.AppointmentStatus;
 import com.emrekirdim.appointmentapp.Models.AppointmentResult;
-import com.emrekirdim.appointmentapp.Models.Specialty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
