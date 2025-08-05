@@ -5,6 +5,9 @@ import com.emrekirdim.appointmentapp.Models.Enums.AppointmentStatus;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Min;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -32,6 +35,7 @@ public class FilterRequestDto {
 
     private AppointmentResult result;
 
+    @Schema(hidden = true)
     @AssertTrue(message = "Start date must be before end date.")
     public boolean isDateRangeValid() {
         if (start == null || end == null) {
