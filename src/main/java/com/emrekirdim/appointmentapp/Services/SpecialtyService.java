@@ -34,7 +34,7 @@ public class SpecialtyService implements BasicGenericService<SpecialtyDto, Long>
     }
 
     @Override
-    public SpecialtyDto create(SpecialtyDto dto) {
+    public SpecialtyDto create(SpecialtyDto dto) throws IllegalArgumentException{
         if (specialtyRepository.findByName(dto.getName().trim()).isPresent()) {
             throw new IllegalArgumentException("A specialty with this name already exists.");
         }
@@ -51,7 +51,7 @@ public class SpecialtyService implements BasicGenericService<SpecialtyDto, Long>
     }
 
     @Override
-    public SpecialtyDto update(SpecialtyDto dto) {
+    public SpecialtyDto update(SpecialtyDto dto) throws IllegalArgumentException{
         Specialty specialty = mapToEntity(dto);
 
         Specialty existingSpecialty = specialtyRepository.findById(specialty.getId())
@@ -69,7 +69,7 @@ public class SpecialtyService implements BasicGenericService<SpecialtyDto, Long>
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long id) throws IllegalArgumentException{
         if (id == null) {
             throw new IllegalArgumentException("Specialty id must not be null.");
         }
@@ -82,7 +82,7 @@ public class SpecialtyService implements BasicGenericService<SpecialtyDto, Long>
         specialtyRepository.delete(specialty);
     }
 
-    public SpecialtyDto getById(Long id) {
+    public SpecialtyDto getById(Long id) throws IllegalArgumentException{
         Specialty specialty = specialtyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Specialty not found with id: " + id));
         return mapToDto(specialty);

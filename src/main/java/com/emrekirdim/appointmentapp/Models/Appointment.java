@@ -1,5 +1,7 @@
 package com.emrekirdim.appointmentapp.Models;
 
+import com.emrekirdim.appointmentapp.Models.Enums.AppointmentResult;
+import com.emrekirdim.appointmentapp.Models.Enums.AppointmentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -2,8 +2,6 @@ package com.emrekirdim.appointmentapp.DTO;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;

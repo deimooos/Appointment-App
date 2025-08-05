@@ -1,4 +1,4 @@
-package com.emrekirdim.appointmentapp.Models;
+package com.emrekirdim.appointmentapp.Models.Enums;
 
 public enum AppointmentStatus {
     SCHEDULED,

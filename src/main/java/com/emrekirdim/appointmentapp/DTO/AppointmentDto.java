@@ -2,8 +2,8 @@ package com.emrekirdim.appointmentapp.DTO;
 
 import javax.validation.constraints.*;
 
-import com.emrekirdim.appointmentapp.Models.AppointmentResult;
-import com.emrekirdim.appointmentapp.Models.AppointmentStatus;
+import com.emrekirdim.appointmentapp.Models.Enums.AppointmentResult;
+import com.emrekirdim.appointmentapp.Models.Enums.AppointmentStatus;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;

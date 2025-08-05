@@ -1,6 +1,8 @@
 package com.emrekirdim.appointmentapp.Controllers;
 
 import com.emrekirdim.appointmentapp.DTO.*;
+import com.emrekirdim.appointmentapp.Models.Enums.AppointmentResult;
+import com.emrekirdim.appointmentapp.Models.Enums.AppointmentStatus;
 import com.emrekirdim.appointmentapp.Services.AppointmentService;
 import com.emrekirdim.appointmentapp.Services.BasicGenericService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -56,7 +58,7 @@ public class AppointmentController extends BasicGenericController<AppointmentDto
     public ResponseEntity<String> completeAppointment(@Valid @RequestBody IdRequestDto<Long> request) {
         AppointmentDto dto = new AppointmentDto();
         dto.setId(request.getId());
-        dto.setStatus(com.emrekirdim.appointmentapp.Models.AppointmentStatus.COMPLETED);
+        dto.setStatus(AppointmentStatus.COMPLETED);
         appointmentService.update(dto);
         return ResponseEntity.ok("Appointment marked as completed.");
     }
@@ -66,7 +68,7 @@ public class AppointmentController extends BasicGenericController<AppointmentDto
     public ResponseEntity<String> markAsSuccessful(@Valid @RequestBody IdRequestDto<Long> request) {
         AppointmentDto dto = new AppointmentDto();
         dto.setId(request.getId());
-        dto.setResult(com.emrekirdim.appointmentapp.Models.AppointmentResult.SUCCESSFUL);
+        dto.setResult(AppointmentResult.SUCCESSFUL);
         appointmentService.update(dto);
         return ResponseEntity.ok("Appointment result marked as successful.");
     }
@@ -76,7 +78,7 @@ public class AppointmentController extends BasicGenericController<AppointmentDto
     public ResponseEntity<String> markAsUnsuccessful(@Valid @RequestBody IdRequestDto<Long> request) {
         AppointmentDto dto = new AppointmentDto();
         dto.setId(request.getId());
-        dto.setResult(com.emrekirdim.appointmentapp.Models.AppointmentResult.UNSUCCESSFUL);
+        dto.setResult(AppointmentResult.UNSUCCESSFUL);
         appointmentService.update(dto);
         return ResponseEntity.ok("Appointment result marked as unsuccessful.");
     }

@@ -2,8 +2,8 @@ package com.emrekirdim.appointmentapp.Repositories;
 
 import com.emrekirdim.appointmentapp.Models.Appointment;
 import com.emrekirdim.appointmentapp.Models.Doctor;
-import com.emrekirdim.appointmentapp.Models.AppointmentStatus;
-import com.emrekirdim.appointmentapp.Models.AppointmentResult;
+import com.emrekirdim.appointmentapp.Models.Enums.AppointmentStatus;
+import com.emrekirdim.appointmentapp.Models.Enums.AppointmentResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -22,13 +22,13 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
     @Autowired
     private SpecialtyRepository specialtyRepository;
 
-    public void checkAnyDoctorExists() {
+    public void checkAnyDoctorExists() throws IllegalArgumentException{
         if (!doctorRepository.existsAnyDoctor()) {
             throw new IllegalArgumentException("No doctors found in the system.");
         }
     }
 
-    private Doctor mapToEntity(DoctorCreateDto dto) {
+    private Doctor mapToEntity(DoctorCreateDto dto) throws IllegalArgumentException{
         Specialty specialty = specialtyRepository.findById(dto.getSpecialtyId())
                 .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
         Doctor doctor = new Doctor();
@@ -50,7 +50,7 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
     }
 
     @Override
-    public DoctorResponseDto create(DoctorCreateDto doctorDto) {
+    public DoctorResponseDto create(DoctorCreateDto doctorDto) throws IllegalArgumentException{
         if (doctorRepository.existsByTitleAndNameAndSurname(
                 doctorDto.getTitle(),
                 doctorDto.getName(),
@@ -73,7 +73,7 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
     }
 
     @Override
-    public DoctorResponseDto update(DoctorUpdateDto doctorDto) {
+    public DoctorResponseDto update(DoctorUpdateDto doctorDto) throws IllegalArgumentException{
         if (doctorDto.getId() == null) {
             throw new IllegalArgumentException("Doctor id must not be null.");
         }
@@ -112,7 +112,7 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long id) throws IllegalArgumentException{
         if (id == null) {
             throw new IllegalArgumentException("Doctor id must not be null.");
         }
@@ -121,7 +121,7 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
         doctorRepository.delete(doctor);
     }
 
-    public List<DoctorResponseDto> getDoctorsBySpecialty(Long specialtyId) {
+    public List<DoctorResponseDto> getDoctorsBySpecialty(Long specialtyId) throws IllegalArgumentException{
         boolean specialtyExists = specialtyRepository.existsById(specialtyId);
         if (!specialtyExists) {
             throw new IllegalArgumentException("Selected specialty does not exist.");

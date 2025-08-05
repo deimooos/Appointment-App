@@ -1,7 +1,7 @@
 package com.emrekirdim.appointmentapp.DTO;
 
-import com.emrekirdim.appointmentapp.Models.AppointmentStatus;
-import com.emrekirdim.appointmentapp.Models.AppointmentResult;
+import com.emrekirdim.appointmentapp.Models.Enums.AppointmentStatus;
+import com.emrekirdim.appointmentapp.Models.Enums.AppointmentResult;
 import lombok.Data;
 
 

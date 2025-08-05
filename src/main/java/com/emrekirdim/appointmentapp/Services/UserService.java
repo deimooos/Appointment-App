@@ -17,7 +17,7 @@ public class UserService implements AdvancedGenericService<UserCreateDto, UserUp
     @Autowired
     private UserRepository userRepository;
 
-    public void checkAnyUserExists() {
+    public void checkAnyUserExists() throws IllegalArgumentException{
         if (!userRepository.existsAnyUser()) {
             throw new IllegalArgumentException("No users found in the system.");
         }
@@ -46,7 +46,7 @@ public class UserService implements AdvancedGenericService<UserCreateDto, UserUp
     }
 
     @Override
-    public UserResponseDto create(UserCreateDto userDto) {
+    public UserResponseDto create(UserCreateDto userDto) throws IllegalArgumentException{
         User user = mapToEntity(userDto);
 
         if (!isValidTurkishId(user.getIdNum())) {
@@ -80,7 +80,7 @@ public class UserService implements AdvancedGenericService<UserCreateDto, UserUp
     }
 
     @Override
-    public UserResponseDto update(UserUpdateDto userDto) {
+    public UserResponseDto update(UserUpdateDto userDto) throws IllegalArgumentException{
         if (userDto.getId() == null) {
             throw new IllegalArgumentException("User id must not be null.");
         }
@@ -112,7 +112,7 @@ public class UserService implements AdvancedGenericService<UserCreateDto, UserUp
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long id) throws IllegalArgumentException {
         if (id == null) {
             throw new IllegalArgumentException("User id must not be null.");
         }
