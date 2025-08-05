@@ -5,11 +5,12 @@
 2. [Introduction](#introduction)
 3. [Technologies Used](#technologies-used)
 4. [Launch](#launch)
-5. [Illustrations](#illustrations)
-6. [Scope of Functions](#scope-of-functions)
-7. [Use Examples](#use-examples)
-8. [Project Status](#project-status)
-9. [Sources](#sources)
+5. [Dockerized Setup](#dockerized-setup)
+6. [Illustrations](#illustrations)
+7. [Scope of Functions](#scope-of-functions)
+8. [Use Examples](#use-examples)
+9. [Project Status](#project-status)
+10. [Sources](#sources)
 
 ---
 
@@ -59,6 +60,26 @@ The API documentation (Swagger UI) is available at:
    http://localhost:8080/swagger-ui.html
    ```
 ---
+
+## Dockerized Setup
+
+- Alternatively, you can run the project using Docker:
+
+1. Make sure Docker Desktop is installed and running on your system.
+
+2. Navigate to the project root folder where `docker-compose.yml` is located.
+
+3. Build and start the containers:
+   ```bash
+   docker-compose up --build
+
+4. Access the application:
+   - API Base URL: http://localhost:8080
+
+   - Swagger UI: http://localhost:8080/swagger-ui.html
+
+- This setup automatically starts both PostgreSQL and the Spring Boot application inside Docker containers.
+
 
 ## Illustrations
 
