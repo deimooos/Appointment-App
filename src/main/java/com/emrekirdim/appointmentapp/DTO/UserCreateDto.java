@@ -1,5 +1,6 @@
 package com.emrekirdim.appointmentapp.DTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -16,6 +17,7 @@ public class UserCreateDto {
             regexp = "^[A-ZÇİÖŞÜ][a-zçğıöşü]{1,20}(\\s[A-ZÇİÖŞÜ][a-zçğıöşü]{1,20})*$",
             message = "Name must contain one or more words, each starting with an uppercase letter followed by lowercase letters."
     )
+    @Schema(type = "string", example = "Mehmet")
     private String name;
 
     @NotBlank(message = "Surname cannot be blank.")
@@ -23,10 +25,12 @@ public class UserCreateDto {
             regexp = "^[A-ZÇİÖŞÜ][a-zçğıöşü]{1,20}$",
             message = "Surname must start with an uppercase letter followed by lowercase letters."
     )
+    @Schema(type = "string", example = "Gündüz")
     private String surname;
 
     @NotBlank(message = "Email cannot be blank.")
     @Email(message = "Email must be in a valid format.")
+    @Schema(type = "string", example = "mehmet@example.com")
     private String email;
 
     @NotBlank(message = "Phone number cannot be blank.")

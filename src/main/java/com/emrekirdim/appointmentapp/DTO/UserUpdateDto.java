@@ -1,5 +1,6 @@
 package com.emrekirdim.appointmentapp.DTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -16,15 +17,18 @@ public class UserUpdateDto {
             regexp = "^[A-ZÇİÖŞÜ][a-zçğıöşü]{1,20}(\\s[A-ZÇİÖŞÜ][a-zçğıöşü]{1,20})*$",
             message = "Name must contain one or more words, each starting with an uppercase letter followed by lowercase letters."
     )
+    @Schema(type = "string", example = "Mehmet")
     private String name;
 
     @Pattern(
             regexp = "^[A-ZÇİÖŞÜ][a-zçğıöşü]{1,20}$",
             message = "Surname must start with an uppercase letter followed by lowercase letters."
     )
+    @Schema(type = "string", example = "Gündüz")
     private String surname;
 
     @Email(message = "Email must be in a valid format.")
+    @Schema(type = "string", example = "mehmet@example.com")
     private String email;
 
     @Pattern(

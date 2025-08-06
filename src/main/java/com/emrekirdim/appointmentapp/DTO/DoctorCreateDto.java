@@ -1,5 +1,6 @@
 package com.emrekirdim.appointmentapp.DTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class DoctorCreateDto {
             regexp = "^([A-ZÇİÖŞÜ][a-zçğıöşü]+)(\\s[A-ZÇİÖŞÜ][a-zçğıöşü]+)*$",
             message = "Name must contain one or more words, each starting with an uppercase letter followed by lowercase letters."
     )
+    @Schema(type = "string", example = "Ahmet")
     private String name;
 
     @NotBlank(message = "Doctor surname cannot be empty.")
@@ -33,6 +35,7 @@ public class DoctorCreateDto {
             regexp = "^[A-ZÇİÖŞÜ][a-zçğıöşü]{1,20}$",
             message = "Surname must start with an uppercase letter followed by lowercase letters."
     )
+    @Schema(type = "string", example = "Yılmaz")
     private String surname;
 
     @NotNull(message = "Specialty ID is required.")
