@@ -20,6 +20,7 @@ public class DoctorCreateDto {
             regexp = "^(Prof\\. (Dr\\.)?|Doç\\. (Dr\\.)?|Yrd\\. Doç\\. (Dr\\.)?|Uzm\\. (Dr\\.)?|Op\\. (Dr\\.)?|Pratisyen Dr\\.|Dr\\.)$",
             message = "Title must be a valid Turkish medical title like Dr., Doç. Dr., Prof. Dr., etc."
     )
+    @Schema(type = "string", example = "Prof. Dr.")
     private String title;
 
     @NotBlank(message = "Doctor name cannot be empty.")

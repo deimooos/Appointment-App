@@ -2,6 +2,8 @@ package com.emrekirdim.appointmentapp.DTO;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
@@ -18,6 +20,7 @@ public class SpecialtyDto {
             regexp = "^[A-Z][a-z]*(\\s[A-Z][a-z]*)*$",
             message = "Specialty name must be valid."
     )
+    @Schema(type = "string", example = "General Surgery")
     private String name;
 }
 
