@@ -5,11 +5,13 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 
 @Data
 public class DoctorUpdateDto {
 
     @NotNull(message = "Doctor ID cannot be null.")
+    @Positive(message = "Doctor ID must be a positive number")
     private Long id;
 
     @Pattern(
@@ -33,5 +35,6 @@ public class DoctorUpdateDto {
     @Schema(type = "string", example = "Yılmaz")
     private String surname;
 
+    @Positive(message = "Specialty ID must be a positive number")
     private Long specialtyId;
 }

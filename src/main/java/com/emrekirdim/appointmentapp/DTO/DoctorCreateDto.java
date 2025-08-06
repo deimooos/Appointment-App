@@ -1,5 +1,6 @@
 package com.emrekirdim.appointmentapp.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,12 +8,14 @@ import lombok.AllArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class DoctorCreateDto {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @NotBlank(message = "Title cannot be blank.")
@@ -40,5 +43,6 @@ public class DoctorCreateDto {
     private String surname;
 
     @NotNull(message = "Specialty ID is required.")
+    @Positive(message = "Specialty ID must be a positive number")
     private Long specialtyId;
 }

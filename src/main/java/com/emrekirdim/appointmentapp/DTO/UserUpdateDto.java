@@ -6,11 +6,13 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 
 @Data
 public class UserUpdateDto {
 
     @NotNull(message = "User ID cannot be null.")
+    @Positive(message = "User ID must be a positive number")
     private Long id;
 
     @Pattern(

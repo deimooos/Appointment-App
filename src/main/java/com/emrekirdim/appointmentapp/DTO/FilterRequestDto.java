@@ -4,7 +4,7 @@ import com.emrekirdim.appointmentapp.Models.Enums.AppointmentResult;
 import com.emrekirdim.appointmentapp.Models.Enums.AppointmentStatus;
 
 import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,13 +16,13 @@ import java.time.LocalDateTime;
 @Data
 public class FilterRequestDto {
 
-    @Min(value = 1, message = "User ID must be greater than 0.")
+    @Positive(message = "User ID must be a positive number")
     private Long userId;
 
-    @Min(value = 1, message = "Doctor ID must be greater than 0.")
+    @Positive(message = "Doctor ID must be a positive number")
     private Long doctorId;
 
-    @Min(value = 1, message = "Specialty ID must be greater than 0.")
+    @Positive(message = "Specialty ID must be a positive number")
     private Long specialtyId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
