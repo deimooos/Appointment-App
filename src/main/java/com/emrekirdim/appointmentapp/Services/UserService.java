@@ -53,9 +53,6 @@ public class UserService implements AdvancedGenericService<UserCreateDto, UserUp
             throw new IllegalArgumentException("Invalid identification number.");
         }
 
-        if (userRepository.existsByNameAndSurname(user.getName(), user.getSurname())) {
-            throw new IllegalArgumentException("User with this name and surname already exists.");
-        }
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email is already registered.");
         }
@@ -94,9 +91,6 @@ public class UserService implements AdvancedGenericService<UserCreateDto, UserUp
         if (userDto.getPhone() != null) existingUser.setPhone(userDto.getPhone());
         if (userDto.getIdNum() != null) existingUser.setIdNum(userDto.getIdNum());
 
-        if (userRepository.existsByNameAndSurnameAndIdNot(existingUser.getName(), existingUser.getSurname(), existingUser.getId())) {
-            throw new IllegalArgumentException("User with this name and surname already exists.");
-        }
         if (userRepository.existsByEmailAndIdNot(existingUser.getEmail(), existingUser.getId())) {
             throw new IllegalArgumentException("Email is already registered.");
         }
