@@ -32,6 +32,10 @@ public class UserCreateDto {
 
     @NotBlank(message = "Email cannot be blank.")
     @Email(message = "Email must be in a valid format.")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            message = "Email must not contain Turkish characters."
+    )
     @Schema(type = "string", example = "mehmet@example.com")
     private String email;
 
