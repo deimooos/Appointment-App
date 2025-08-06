@@ -135,13 +135,6 @@ public class DoctorService implements AdvancedGenericService<DoctorCreateDto, Do
                 .collect(Collectors.toList());
     }
 
-    public boolean existsBySpecialtyId(Long specialtyId) {
-        if (specialtyId == null) {
-            throw new IllegalArgumentException("Specialty id must not be null.");
-        }
-        return doctorRepository.existsBySpecialtyId(specialtyId);
-    }
-
     public Doctor getEntityById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Doctor id must not be null.");

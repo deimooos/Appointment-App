@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
             sb.append(constant.toString()).append(", ");
         }
         if (sb.length() > 2) {
-            sb.setLength(sb.length() - 2); // son virgül ve boşluk sil
+            sb.setLength(sb.length() - 2);
         }
         return sb.toString();
     }
