@@ -26,8 +26,8 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         if (!userRepository.existsAnyUser()) {
-            User user1 = new User(null, "Emre", "Kırdım", "emre@example.com", "05362402898", "37297530286");
-            User user2 = new User(null, "Hasan", "Kum", "hasan@example.com", "05511182790", "31631029016");
+            User user1 = new User(null, "Emre", "Kırdım", "emre@example.com", "05379856215", "15231787330");
+            User user2 = new User(null, "Hasan", "Kum", "hasan@example.com", "05073659206", "21664588246");
             userRepository.save(user1);
             userRepository.save(user2);
         }
